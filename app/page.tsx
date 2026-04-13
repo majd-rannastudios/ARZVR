@@ -42,12 +42,6 @@ const features = [
   },
 ]
 
-const howItWorks = [
-  { step: "01", title: "Choose", desc: "Pick your date, session type, duration, and how many machines you want." },
-  { step: "02", title: "Book", desc: "Pick a time slot, enter your details, and confirm. Your machine is locked in." },
-  { step: "03", title: "Hunt", desc: "Show up, gear up, and step into a world where the stakes feel very real." },
-]
-
 const testimonials = [
   {
     quote: "Genuinely the most intense VR experience I've had. The machines are top-tier and the space is designed for focus.",
@@ -364,34 +358,6 @@ export default function Home() {
           </div>
         </div>
 
-        {/* How it works */}
-        <div className="mx-auto max-w-5xl">
-          <div className="text-center mb-12">
-            <span className="text-xs font-semibold uppercase tracking-widest text-vrz-green mb-4 block">The Process</span>
-            <h2 className="font-heading text-4xl sm:text-6xl text-white" style={{ fontFamily: "var(--font-heading)" }}>How It Works</h2>
-          </div>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
-            {howItWorks.map(({ step, title, desc }) => (
-              <div key={step} className="relative flex flex-col gap-5 rounded-xl border border-white/8 bg-white/2 p-6 hover:border-vrz-green/20 transition-colors group">
-                <span className="font-heading text-6xl text-white/5 absolute top-4 right-4 group-hover:text-vrz-green/10 transition-colors"
-                  style={{ fontFamily: "var(--font-heading)" }}>{step}</span>
-                <div className="flex h-12 w-12 items-center justify-center rounded-full border border-vrz-green/30 bg-vrz-green/10 text-vrz-green font-bold text-sm">
-                  {step}
-                </div>
-                <div>
-                  <h3 className="font-heading text-2xl text-white mb-2" style={{ fontFamily: "var(--font-heading)" }}>{title}</h3>
-                  <p className="text-sm text-zinc-500 leading-relaxed">{desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-          <div className="text-center mt-8">
-            <a href="#book"
-              className="inline-flex items-center gap-2 rounded-lg bg-vrz-green px-8 py-3 text-sm font-bold text-black hover:bg-vrz-green/90 transition-all">
-              Book Now <ArrowRightIcon className="size-4" />
-            </a>
-          </div>
-        </div>
       </section>
 
       {/* ══════════════════════════════════════════════════════
