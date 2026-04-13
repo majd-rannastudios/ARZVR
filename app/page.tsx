@@ -94,15 +94,56 @@ const stats = [
   { value: "∞", label: "Replays Wanted" },
 ]
 
+// Duplicated for seamless infinite loop
+const CAROUSEL_ITEMS = [...testimonials, ...testimonials]
+
 // ── Page ─────────────────────────────────────────────────────────────────────
 export default function Home() {
   const [weekendMode, setWeekendMode] = useState(false)
   const carouselRef = useRef<HTMLDivElement>(null)
+  const userActive = useRef(false)
+  const rafRef = useRef<number | undefined>(undefined)
+
+  useEffect(() => {
+    const el = carouselRef.current
+    if (!el) return
+
+    function animate() {
+      if (!userActive.current && el) {
+        el.scrollLeft += 0.6
+        // Seamless reset: when past first copy, jump back by exactly half
+        if (el.scrollLeft >= el.scrollWidth / 2) {
+          el.scrollLeft -= el.scrollWidth / 2
+        }
+      }
+      rafRef.current = requestAnimationFrame(animate)
+    }
+
+    rafRef.current = requestAnimationFrame(animate)
+
+    const pause = () => { userActive.current = true }
+    const resume = () => { setTimeout(() => { userActive.current = false }, 1500) }
+
+    el.addEventListener("mouseenter", pause)
+    el.addEventListener("mouseleave", resume)
+    el.addEventListener("touchstart", pause, { passive: true })
+    el.addEventListener("touchend", resume)
+
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current)
+      el.removeEventListener("mouseenter", pause)
+      el.removeEventListener("mouseleave", resume)
+      el.removeEventListener("touchstart", pause)
+      el.removeEventListener("touchend", resume)
+    }
+  }, [])
 
   function scrollCarousel(dir: "left" | "right") {
-    if (!carouselRef.current) return
-    const amount = carouselRef.current.offsetWidth * 0.8
-    carouselRef.current.scrollBy({ left: dir === "right" ? amount : -amount, behavior: "smooth" })
+    const el = carouselRef.current
+    if (!el) return
+    userActive.current = true
+    el.scrollBy({ left: dir === "right" ? 340 : -340, behavior: "smooth" })
+    setTimeout(() => { userActive.current = false }, 2000)
   }
 
   return (
@@ -389,13 +430,13 @@ export default function Home() {
           <div
             ref={carouselRef}
             className="flex gap-4 overflow-x-auto pb-2"
-            style={{ scrollSnapType: "x mandatory", scrollbarWidth: "none", msOverflowStyle: "none" }}
+            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
-            {testimonials.map(({ quote, name, tag, stars }) => (
+            {CAROUSEL_ITEMS.map(({ quote, name, tag, stars }, idx) => (
               <div
-                key={name}
+                key={idx}
                 className="flex flex-col gap-4 rounded-xl border border-white/8 bg-white/2 p-6 hover:border-white/15 transition-all shrink-0"
-                style={{ scrollSnapAlign: "start", width: "clamp(280px, 33vw, 360px)" }}
+                style={{ width: "clamp(280px, 33vw, 360px)" }}
               >
                 {/* Stars */}
                 <div className="flex gap-0.5">
@@ -436,7 +477,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
             {/* WhatsApp */}
             <a href="https://wa.me/96170000000" target="_blank" rel="noopener noreferrer"
               className="group flex flex-col gap-4 rounded-xl border border-white/10 bg-white/2 p-6 hover:border-[#25D366]/40 hover:bg-[#25D366]/5 transition-all">
