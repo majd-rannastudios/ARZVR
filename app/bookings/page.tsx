@@ -20,10 +20,10 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { useBookings, type Booking } from "@/hooks/useBookings"
+import { useLocalBookings, type Booking } from "@/hooks/useBookings"
 
 export default function BookingsPage() {
-  const { bookings, cancelBooking } = useBookings()
+  const { bookings, cancelBooking } = useLocalBookings()
   const [toCancel, setToCancel] = useState<Booking | null>(null)
 
   const sorted = [...bookings].sort(
