@@ -13,24 +13,36 @@ export default async function AdminOverviewPage() {
   const [
     { data: todayBookings },
     { data: monthBookings },
+    { data: todayReceivables },
+    { data: monthReceivables },
     { data: monthExpenses },
     { data: recentBookings },
   ] = await Promise.all([
     supabase.from("bookings").select("*").eq("date", todayStr).neq("status", "cancelled"),
     supabase.from("bookings").select("total_price").gte("date", monthStart).lte("date", monthEnd).neq("status", "cancelled"),
-    supabase.from("expenses").select("amount").gte("date", monthStart).lte("date", monthEnd),
+    supabase.from("receivables").select("amount").eq("date", todayStr),
+    supabase.from("receivables").select("amount").gte("date", monthStart).lte("date", monthEnd),
+    supabase.from("expenses").select("amount, phase").gte("date", monthStart).lte("date", monthEnd),
     supabase.from("bookings").select("*").neq("status", "cancelled").order("created_at", { ascending: false }).limit(8),
   ])
 
-  const todayRevenue = (todayBookings ?? []).reduce((s, b) => s + (b.total_price ?? 0), 0)
-  const monthRevenue = (monthBookings ?? []).reduce((s, b) => s + (b.total_price ?? 0), 0)
-  const monthExpTotal = (monthExpenses ?? []).reduce((s, e) => s + (e.amount ?? 0), 0)
+  const todayBookingRev  = (todayBookings ?? []).reduce((s, b) => s + (b.total_price ?? 0), 0)
+  const todayRecvRev     = (todayReceivables ?? []).reduce((s, r) => s + (r.amount ?? 0), 0)
+  const todayRevenue     = todayBookingRev + todayRecvRev
+
+  const monthBookingRev  = (monthBookings ?? []).reduce((s, b) => s + (b.total_price ?? 0), 0)
+  const monthRecvRev     = (monthReceivables ?? []).reduce((s, r) => s + (r.amount ?? 0), 0)
+  const monthRevenue     = monthBookingRev + monthRecvRev
+
+  const monthOpex   = (monthExpenses ?? []).filter(e => e.phase === "opex").reduce((s, e) => s + (e.amount ?? 0), 0)
+  const monthCapex  = (monthExpenses ?? []).filter(e => e.phase === "capex").reduce((s, e) => s + (e.amount ?? 0), 0)
+  const monthExpTotal = monthOpex + monthCapex
   const netPL = monthRevenue - monthExpTotal
 
   const cards = [
-    { label: "Today's Revenue", value: `$${todayRevenue}`, sub: `${todayBookings?.length ?? 0} bookings`, icon: DollarSignIcon, green: true },
-    { label: "Month Revenue", value: `$${monthRevenue.toLocaleString()}`, sub: format(today, "MMMM yyyy"), icon: TrendingUpIcon, green: true },
-    { label: "Month Expenses", value: `$${monthExpTotal.toLocaleString()}`, sub: "all categories", icon: TrendingDownIcon, green: false },
+    { label: "Today's Revenue", value: `$${todayRevenue.toLocaleString()}`, sub: `${todayBookings?.length ?? 0} bookings · $${todayRecvRev.toLocaleString()} other`, icon: DollarSignIcon, green: true },
+    { label: "Month Revenue", value: `$${monthRevenue.toLocaleString()}`, sub: `$${monthBookingRev.toLocaleString()} bookings · $${monthRecvRev.toLocaleString()} other`, icon: TrendingUpIcon, green: true },
+    { label: "Month Expenses", value: `$${monthExpTotal.toLocaleString()}`, sub: `OpEx $${monthOpex.toLocaleString()} · CapEx $${monthCapex.toLocaleString()}`, icon: TrendingDownIcon, green: false },
     { label: "Net P&L", value: `${netPL >= 0 ? "+" : ""}$${netPL.toLocaleString()}`, sub: "revenue – expenses", icon: ActivityIcon, green: netPL >= 0 },
   ]
 

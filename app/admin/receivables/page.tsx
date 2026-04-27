@@ -78,7 +78,7 @@ export default function ReceivablesPage() {
           <div>
             <label className="text-xs text-zinc-500 uppercase tracking-wider mb-1.5 block">Type</label>
             <select value={type} onChange={e => setType(e.target.value)}
-              className="w-full h-10 px-3 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-vrz-green transition-colors">
+              className="w-full h-10 px-3 rounded-lg bg-zinc-950 border border-white/10 text-white text-sm focus:outline-none focus:border-vrz-green transition-colors">
               {TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
             </select>
           </div>
