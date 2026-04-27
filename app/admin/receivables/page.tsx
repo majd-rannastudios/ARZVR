@@ -29,7 +29,8 @@ export default function ReceivablesPage() {
   const [loading, setLoading]       = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [loggingId, setLoggingId]   = useState<string | null>(null)
-  const [pendingTypes, setPendingTypes] = useState<Record<string, string>>({})
+  const [pendingTypes, setPendingTypes]   = useState<Record<string, string>>({})
+  const [pendingAmounts, setPendingAmounts] = useState<Record<string, string>>({})
 
   // Manual form
   const [description, setDescription] = useState("")
@@ -60,10 +61,16 @@ export default function ReceivablesPage() {
 
     setItems(receivables ?? [])
     setPending(unlogged)
+    // Pre-fill amounts with booking totals as a suggestion
+    const amounts: Record<string, string> = {}
+    ;(unlogged ?? []).forEach(b => { amounts[b.id] = String(b.total_price) })
+    setPendingAmounts(amounts)
     setLoading(false)
   }
 
   async function logFromBooking(booking: PendingBooking) {
+    const confirmedAmount = parseFloat(pendingAmounts[booking.id] ?? String(booking.total_price))
+    if (!confirmedAmount || confirmedAmount <= 0) return
     setLoggingId(booking.id)
     const payType = pendingTypes[booking.id] ?? "cash"
     const supabase = createClient()
@@ -71,7 +78,7 @@ export default function ReceivablesPage() {
       ? `Private session — ${booking.name}`
       : `${booking.machine_count}× Single — ${booking.name}`
     const { data, error } = await supabase.from("receivables")
-      .insert({ date: booking.date, description: desc, amount: booking.total_price, type: payType, booking_id: booking.id })
+      .insert({ date: booking.date, description: desc, amount: confirmedAmount, type: payType, booking_id: booking.id })
       .select().single()
     if (!error && data) {
       setItems(prev => [data, ...prev])
@@ -123,29 +130,44 @@ export default function ReceivablesPage() {
           </div>
           <div className="divide-y divide-white/5">
             {pending.map(b => (
-              <div key={b.id} className="px-5 py-3.5 flex items-center gap-3 flex-wrap sm:flex-nowrap">
+              <div key={b.id} className="px-5 py-4 flex flex-col sm:flex-row sm:items-center gap-3">
+                {/* Booking info */}
                 <div className="flex-1 min-w-0">
                   <p className="text-sm text-zinc-200 font-medium truncate">{b.name}</p>
                   <p className="text-xs text-zinc-500 mt-0.5">
                     {format(parseISO(b.date), "EEE, MMM d")} · {b.start_time} · {b.session_type === "private" ? "Private" : `${b.machine_count}× Single`}
                   </p>
+                  <p className="text-xs text-zinc-600 mt-0.5">Booking total: ${b.total_price.toLocaleString()}</p>
                 </div>
-                <span className="text-sm font-bold text-vrz-green shrink-0">${b.total_price.toLocaleString()}</span>
-                <select
-                  value={pendingTypes[b.id] ?? "cash"}
-                  onChange={e => setPendingTypes(prev => ({ ...prev, [b.id]: e.target.value }))}
-                  className={SELECT_CLS}
-                >
-                  {TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
-                </select>
-                <button
-                  onClick={() => logFromBooking(b)}
-                  disabled={loggingId === b.id}
-                  className="flex items-center gap-1.5 px-3 h-9 rounded-lg bg-vrz-green text-black text-xs font-bold hover:bg-vrz-green/90 transition-all disabled:opacity-50 shrink-0"
-                >
-                  <CheckCircleIcon className="size-3.5" />
-                  {loggingId === b.id ? "Logging…" : "Log Payment"}
-                </button>
+                {/* Controls */}
+                <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+                  <div className="relative">
+                    <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-zinc-500">$</span>
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={pendingAmounts[b.id] ?? String(b.total_price)}
+                      onChange={e => setPendingAmounts(prev => ({ ...prev, [b.id]: e.target.value }))}
+                      className="h-9 w-28 pl-6 pr-2 rounded-lg bg-zinc-950 border border-white/10 text-white text-xs focus:outline-none focus:border-vrz-green transition-colors"
+                    />
+                  </div>
+                  <select
+                    value={pendingTypes[b.id] ?? "cash"}
+                    onChange={e => setPendingTypes(prev => ({ ...prev, [b.id]: e.target.value }))}
+                    className={SELECT_CLS}
+                  >
+                    {TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+                  </select>
+                  <button
+                    onClick={() => logFromBooking(b)}
+                    disabled={loggingId === b.id}
+                    className="flex items-center gap-1.5 px-3 h-9 rounded-lg bg-vrz-green text-black text-xs font-bold hover:bg-vrz-green/90 transition-all disabled:opacity-50 shrink-0"
+                  >
+                    <CheckCircleIcon className="size-3.5" />
+                    {loggingId === b.id ? "Logging…" : "Confirm & Log"}
+                  </button>
+                </div>
               </div>
             ))}
           </div>
