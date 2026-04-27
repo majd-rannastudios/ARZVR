@@ -128,6 +128,15 @@
     @apply font-sans;
     scroll-behavior: smooth;
   }
+
+  /* Dark native selects & date inputs across the whole app */
+  select,
+  select option,
+  input[type="date"] {
+    background-color: #09090b;
+    color: white;
+    color-scheme: dark;
+  }
 }
 
 /* ── Custom cursor ───────────────────────────────────────── */
