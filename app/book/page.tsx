@@ -1,5 +1,7 @@
 import BookingSection from "@/components/BookingSection"
 
+export const dynamic = "force-dynamic"
+
 export default function BookPage() {
   return (
     <div className="mx-auto max-w-5xl px-4 py-10">
