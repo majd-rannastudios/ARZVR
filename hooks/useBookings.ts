@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react"
 import { format } from "date-fns"
 import { createClient } from "@/lib/supabase/client"
+import { sendBookingEmail } from "@/lib/sendEmail"
 
 export interface Booking {
   id: string
@@ -84,6 +85,13 @@ export function useBookings() {
     localStorage.setItem(LS_KEY, JSON.stringify([booking, ...stored]))
 
     setBookings((prev) => [booking, ...prev])
+
+    sendBookingEmail("confirmed", {
+      id: booking.id, name: booking.name, email: booking.email,
+      date: booking.date, start_time: booking.startTime, end_time: booking.endTime,
+      session_type: booking.sessionType, machine_count: booking.machineCount,
+      total_price: booking.totalPrice, duration_minutes: booking.durationMinutes,
+    })
   }, [supabase]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const cancelBooking = useCallback(async (id: string) => {
