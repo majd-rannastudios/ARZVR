@@ -51,9 +51,9 @@ function fromRow(row: Record<string, unknown>): Booking {
 // Used by BookingSection for conflict checking + adding bookings
 export function useBookings() {
   const [bookings, setBookings] = useState<Booking[]>([])
-  const supabase = createClient()
 
   useEffect(() => {
+    const supabase = createClient()
     supabase
       .from("bookings")
       .select("id, date, start_time, end_time, session_type, machine_count, status")
@@ -61,9 +61,10 @@ export function useBookings() {
       .then(({ data }) => {
         if (data) setBookings(data.map(fromRow))
       })
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [])
 
   const addBooking = useCallback(async (booking: Booking) => {
+    const supabase = createClient()
     await supabase.from("bookings").insert({
       id: booking.id,
       date: booking.date,
@@ -92,14 +93,15 @@ export function useBookings() {
       session_type: booking.sessionType, machine_count: booking.machineCount,
       total_price: booking.totalPrice, duration_minutes: booking.durationMinutes,
     })
-  }, [supabase]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [])
 
   const cancelBooking = useCallback(async (id: string) => {
+    const supabase = createClient()
     await supabase.from("bookings").update({ status: "cancelled" }).eq("id", id)
     const stored: Booking[] = JSON.parse(localStorage.getItem(LS_KEY) ?? "[]")
     localStorage.setItem(LS_KEY, JSON.stringify(stored.filter((b) => b.id !== id)))
     setBookings((prev) => prev.filter((b) => b.id !== id))
-  }, [supabase]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [])
 
   return { bookings, addBooking, cancelBooking }
 }
@@ -107,9 +109,9 @@ export function useBookings() {
 // Used by /bookings customer page — shows their own bookings from localStorage IDs
 export function useLocalBookings() {
   const [bookings, setBookings] = useState<Booking[]>([])
-  const supabase = createClient()
 
   useEffect(() => {
+    const supabase = createClient()
     const localBookings: Booking[] = JSON.parse(localStorage.getItem(LS_KEY) ?? "[]")
     const ids = localBookings.map((b) => b.id)
     if (ids.length === 0) { setBookings([]); return }
@@ -121,14 +123,15 @@ export function useLocalBookings() {
       .then(({ data }) => {
         if (data) setBookings(data.map(fromRow))
       })
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [])
 
   const cancelBooking = useCallback(async (id: string) => {
+    const supabase = createClient()
     await supabase.from("bookings").update({ status: "cancelled" }).eq("id", id)
     const stored: Booking[] = JSON.parse(localStorage.getItem(LS_KEY) ?? "[]")
     localStorage.setItem(LS_KEY, JSON.stringify(stored.filter((b) => b.id !== id)))
     setBookings((prev) => prev.filter((b) => b.id !== id))
-  }, [supabase]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [])
 
   return { bookings, cancelBooking }
 }
