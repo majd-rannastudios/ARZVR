@@ -4,6 +4,7 @@ import "./globals.css"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import CustomCursor from "@/components/CustomCursor"
+import AuthHashHandler from "@/components/AuthHashHandler"
 import { MessageCircleIcon } from "lucide-react"
 
 const bebasNeue = Bebas_Neue({
@@ -85,6 +86,7 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
+        <AuthHashHandler />
         <CustomCursor />
         <Navbar />
         <main className="flex-1 pt-16">{children}</main>
