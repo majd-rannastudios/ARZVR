@@ -34,8 +34,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   async function logout() {
     const supabase = createClient()
     await supabase.auth.signOut()
-    router.push("/admin/login")
-    router.refresh()
+    window.location.href = "/admin/login"
   }
 
   const Sidebar = () => (

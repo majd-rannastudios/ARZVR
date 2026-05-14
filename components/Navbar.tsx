@@ -51,8 +51,7 @@ export default function Navbar() {
   async function handleSignOut() {
     const supabase = createClient()
     await supabase.auth.signOut()
-    setUserMenuOpen(false)
-    router.push("/")
+    window.location.href = "/"
   }
 
   useEffect(() => {
