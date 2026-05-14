@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { ZapIcon, MailIcon, LockIcon } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
@@ -23,6 +23,13 @@ export default function AdminLoginPage() {
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
   const [googleLoading, setGoogleLoading] = useState(false)
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    if (params.get("error") === "auth_failed") {
+      setError("This account isn't registered. Contact your admin to get access.")
+    }
+  }, [])
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault()

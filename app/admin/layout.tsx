@@ -9,6 +9,7 @@ import {
   TrendingUpIcon,
   ReceiptIcon,
   WalletIcon,
+  ClipboardListIcon,
   LogOutIcon,
   MenuIcon,
   XIcon,
@@ -22,6 +23,7 @@ const navItems = [
   { href: "/admin/financials",  label: "P&L",          icon: TrendingUpIcon },
   { href: "/admin/expenses",    label: "Expenses",     icon: ReceiptIcon },
   { href: "/admin/receivables", label: "Receivables",  icon: WalletIcon },
+  { href: "/admin/actions",     label: "Actions",      icon: ClipboardListIcon },
 ]
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
