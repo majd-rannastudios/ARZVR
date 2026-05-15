@@ -161,12 +161,12 @@ export default function EquityPage() {
     ])),
   [injections])
 
-  // The partner who has paid the most relative to their CapEx % sets the benchmark.
-  // impliedTotal = that payment ÷ their CapEx % → everyone else's obligation derives from this.
-  // e.g. Akl pays $1,750 at 26.04% → implied round = $6,720 → Elie owes $1,750, Roy/Ralph owe $875 each.
+  // Only non-sweat partners set the implied total — Majd's discounted % would
+  // inflate the benchmark unfairly (same $ amount ÷ smaller % = bigger implied round).
+  // impliedTotal = max(injected ÷ capexPct) across full-rate partners only.
   const { impliedTotal, impliedBy } = useMemo(() => {
     let best = { ratio: 0, name: "" }
-    for (const sh of SHAREHOLDERS) {
+    for (const sh of SHAREHOLDERS.filter(s => s.sweat === 0)) {
       const ratio = injectedBySh[sh.id] / capexSharePct(sh.id)
       if (ratio > best.ratio) best = { ratio, name: sh.name }
     }
