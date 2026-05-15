@@ -153,19 +153,36 @@ export default function EquityPage() {
   const budgetSpent    = fin.capex   // actual CapEx logged
   const budgetLeft     = totalBudget - budgetSpent
 
-  // Option B: obligation = each partner's capex% × total injected so far
-  // → whoever has paid most sets the proportional bar for everyone else
+  // Per-shareholder injection totals (needed for impliedTotal)
+  const injectedBySh = useMemo(() =>
+    Object.fromEntries(SHAREHOLDERS.map(sh => [
+      sh.id,
+      injections.filter(i => i.shareholder === sh.id).reduce((s, i) => s + i.amount, 0),
+    ])),
+  [injections])
+
+  // The partner who has paid the most relative to their CapEx % sets the benchmark.
+  // impliedTotal = that payment ÷ their CapEx % → everyone else's obligation derives from this.
+  // e.g. Akl pays $1,750 at 26.04% → implied round = $6,720 → Elie owes $1,750, Roy/Ralph owe $875 each.
+  const { impliedTotal, impliedBy } = useMemo(() => {
+    let best = { ratio: 0, name: "" }
+    for (const sh of SHAREHOLDERS) {
+      const ratio = injectedBySh[sh.id] / capexSharePct(sh.id)
+      if (ratio > best.ratio) best = { ratio, name: sh.name }
+    }
+    return { impliedTotal: best.ratio, impliedBy: best.name }
+  }, [injectedBySh])
+
   const stats = useMemo(() => SHAREHOLDERS.map(sh => {
-    const capexPct    = capexSharePct(sh.id)
-    const obligation  = totalInjected * capexPct   // fair share of the current pool
-    const injected    = injections.filter(i => i.shareholder === sh.id).reduce((s, i) => s + i.amount, 0)
-    const balance     = injected - obligation       // positive = ahead, negative = owes
-    // Forward-looking: what they'll eventually need based on total budget
-    const budgetObligation = totalBudget * capexPct
-    const stillToGo   = Math.max(0, budgetObligation - injected)
-    const profitShare  = netPL > 0 ? netPL * sh.equity : 0
+    const capexPct         = capexSharePct(sh.id)
+    const injected         = injectedBySh[sh.id]
+    const obligation       = impliedTotal * capexPct      // what they owe, based on the highest payer
+    const balance          = injected - obligation         // positive = ahead, negative = still owes
+    const budgetObligation = totalBudget * capexPct       // forward-looking: full budget share
+    const stillToGo        = Math.max(0, budgetObligation - injected)
+    const profitShare      = netPL > 0 ? netPL * sh.equity : 0
     return { ...sh, capexPct, obligation, injected, balance, budgetObligation, stillToGo, profitShare }
-  }), [injections, totalInjected, totalBudget, netPL])
+  }), [injectedBySh, impliedTotal, totalBudget, netPL])
 
   const stillNeeded = stats.reduce((s, sh) => s + Math.max(0, -sh.balance), 0)
 
@@ -343,8 +360,10 @@ export default function EquityPage() {
           <div>
             <h2 className="text-sm font-semibold text-white">Capital Contributions</h2>
             <p className="text-xs text-zinc-600 mt-0.5">
-              Each partner's fair share of the ${fmt(totalInjected)} injected so far, based on their CapEx %.
-              {totalBudget > 0 && ` Budget target shows what they'll eventually owe on the $${fmt(totalBudget)} total budget.`}
+              {impliedTotal > 0
+                ? `${impliedBy}'s payment sets the bar — implies a $${fmt(impliedTotal)} total round. Everyone else's obligation is their CapEx % of that.`
+                : "No injections yet. The first payment will set the implied total round for all partners."}
+              {totalBudget > 0 && ` "Still to go" shows remaining obligation toward the $${fmt(totalBudget)} budget.`}
             </p>
           </div>
         </div>
@@ -423,7 +442,7 @@ export default function EquityPage() {
           <div className="px-5 py-4 border-b border-white/5 flex items-center gap-2">
             <TrendingDownIcon className="size-4 text-amber-400" />
             <h2 className="text-sm font-semibold text-white">Contribution Table</h2>
-            <span className="ml-auto text-xs text-zinc-600">Pool: ${fmt(totalInjected)}</span>
+            <span className="ml-auto text-xs text-zinc-600">Implied round: ${fmt(impliedTotal)}</span>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
@@ -466,9 +485,11 @@ export default function EquityPage() {
                 <tr className="bg-white/2 font-medium border-t-2 border-white/10">
                   <td className="px-5 py-3 text-zinc-300">Total</td>
                   <td className="px-5 py-3 text-right text-zinc-400">100%</td>
+                  <td className="px-5 py-3 text-right text-zinc-200">${fmt(impliedTotal)}</td>
                   <td className="px-5 py-3 text-right text-zinc-200">${fmt(totalInjected)}</td>
-                  <td className="px-5 py-3 text-right text-zinc-200">${fmt(totalInjected)}</td>
-                  <td className="px-5 py-3 text-right text-zinc-500">—</td>
+                  <td className={`px-5 py-3 text-right ${totalInjected >= impliedTotal - 0.5 ? "text-vrz-green" : "text-red-400"}`}>
+                    {totalInjected >= impliedTotal - 0.5 ? "—" : `−$${fmt(impliedTotal - totalInjected)}`}
+                  </td>
                   {totalBudget > 0 && (
                     <td className={`px-5 py-3 text-right ${totalBudget > totalInjected ? "text-blue-400" : "text-vrz-green"}`}>
                       {totalBudget > totalInjected ? `$${fmt(totalBudget - totalInjected)}` : "Funded ✓"}
