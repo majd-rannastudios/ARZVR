@@ -35,6 +35,14 @@ const CATEGORY_MAP = Object.fromEntries(
   [...CAPEX_CATEGORIES, ...OPEX_CATEGORIES].map(c => [c.value, c.label])
 )
 
+const PARTNERS = [
+  { id: "majd",  name: "Majd Farah"   },
+  { id: "akl",   name: "Akl Farah"    },
+  { id: "elie",  name: "Elie Khoury"  },
+  { id: "roy",   name: "Roy Sawma"    },
+  { id: "ralph", name: "Ralph Zgheib" },
+]
+
 const SELECT_CLS = "w-full h-10 px-3 rounded-lg bg-zinc-950 border border-white/10 text-white text-sm focus:outline-none focus:border-vrz-green transition-colors"
 const INPUT_CLS  = "w-full h-10 px-3 rounded-lg bg-white/5 border border-white/10 text-white text-sm placeholder:text-zinc-600 focus:outline-none focus:border-vrz-green transition-colors"
 
@@ -108,6 +116,19 @@ export default function ExpensesPage() {
 
     if (!error && data) {
       setExpenses(prev => [{ ...data, splits: data.splits ?? [] }, ...prev])
+
+      // Auto-inject for the paying partner
+      const partner = PARTNERS.find(p => p.name === paidBy)
+      if (!isSplit && partner) {
+        const label = [CATEGORY_MAP[category] ?? category, description].filter(Boolean).join(" — ")
+        await supabase.from("injections").insert({
+          shareholder: partner.id,
+          amount:      parseFloat(amount),
+          date,
+          description: `Expense: ${label}`,
+        })
+      }
+
       setCategory(""); setDescription(""); setAmount(""); setPaidBy("Organization")
       setIsSplit(false); setSplits([{ name: "", amount: "" }])
     }
@@ -202,15 +223,17 @@ export default function ExpensesPage() {
           {!isSplit && (
             <div>
               <label className="text-xs text-zinc-500 uppercase tracking-wider mb-1.5 block">Paid By</label>
-              <div className="flex gap-2">
-                <input type="text" value={paidBy} onChange={e => setPaidBy(e.target.value)}
-                  placeholder="Name or Organization"
-                  className={`${INPUT_CLS} flex-1`} />
-                <button type="button" onClick={() => setPaidBy("Organization")}
-                  className={`px-3 h-10 rounded-lg border text-xs font-medium transition-all shrink-0 ${paidBy === "Organization" ? "border-vrz-green bg-vrz-green/10 text-vrz-green" : "border-white/10 text-zinc-400 hover:border-white/20 hover:text-white"}`}>
-                  Org
-                </button>
-              </div>
+              <select value={paidBy} onChange={e => setPaidBy(e.target.value)} className={SELECT_CLS}>
+                <option value="Organization">Organization (shared wallet)</option>
+                {PARTNERS.map(p => (
+                  <option key={p.id} value={p.name}>{p.name} — auto-injects to equity</option>
+                ))}
+              </select>
+              {PARTNERS.some(p => p.name === paidBy) && (
+                <p className="text-xs text-blue-400 mt-1.5">
+                  ${amount || "0"} will be added to {paidBy.split(" ")[0]}&apos;s equity injections automatically.
+                </p>
+              )}
             </div>
           )}
 
