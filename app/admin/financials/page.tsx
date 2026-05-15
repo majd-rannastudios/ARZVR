@@ -2,14 +2,15 @@
 
 import { useState, useEffect } from "react"
 import { format, startOfMonth, endOfMonth, startOfYear, endOfYear, subMonths } from "date-fns"
-import { TrendingUpIcon, TrendingDownIcon, ActivityIcon, BarChart3Icon } from "lucide-react"
+import { TrendingUpIcon, TrendingDownIcon, ActivityIcon, BarChart3Icon, WalletIcon, UsersIcon } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 
 type Period = "month" | "ytd" | "all"
 
-interface Expense { phase: string; category: string; amount: number; date: string }
-interface Booking { total_price: number; date: string; status: string }
+interface Expense    { phase: string; category: string; amount: number; date: string }
+interface Booking    { total_price: number; date: string; status: string }
 interface Receivable { amount: number; date: string }
+interface Injection  { amount: number }
 
 const CATEGORY_LABELS: Record<string, string> = {
   renovation: "Renovation", vr_sets: "VR Headsets", vr_guns: "VR Guns",
@@ -20,10 +21,11 @@ const CATEGORY_LABELS: Record<string, string> = {
 
 export default function FinancialsPage() {
   const [period, setPeriod] = useState<Period>("month")
-  const [bookings, setBookings] = useState<Booking[]>([])
-  const [expenses, setExpenses] = useState<Expense[]>([])
+  const [bookings,    setBookings]    = useState<Booking[]>([])
+  const [expenses,    setExpenses]    = useState<Expense[]>([])
   const [receivables, setReceivables] = useState<Receivable[]>([])
-  const [loading, setLoading] = useState(true)
+  const [injections,  setInjections]  = useState<Injection[]>([])
+  const [loading,     setLoading]     = useState(true)
 
   const now = new Date()
 
@@ -38,6 +40,13 @@ export default function FinancialsPage() {
     }
     return { from: "2000-01-01", to: "2099-12-31" }
   }
+
+  // Injections are cumulative capital — fetch once, no date filter
+  useEffect(() => {
+    createClient().from("injections").select("amount").then(({ data }) => {
+      setInjections(data ?? [])
+    })
+  }, [])
 
   useEffect(() => {
     setLoading(true)
@@ -55,15 +64,17 @@ export default function FinancialsPage() {
     })
   }, [period]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const bookingRevenue = bookings.filter(b => b.status !== "cancelled").reduce((s, b) => s + b.total_price, 0)
+  const bookingRevenue  = bookings.filter(b => b.status !== "cancelled").reduce((s, b) => s + b.total_price, 0)
   const receivableTotal = receivables.reduce((s, r) => s + r.amount, 0)
-  const totalRevenue = bookingRevenue + receivableTotal
-  const totalExpenses = expenses.reduce((s, e) => s + e.amount, 0)
-  const capex = expenses.filter(e => e.phase === "capex").reduce((s, e) => s + e.amount, 0)
-  const opex = expenses.filter(e => e.phase === "opex").reduce((s, e) => s + e.amount, 0)
-  const grossProfit = bookingRevenue - opex
-  const netPL = totalRevenue - totalExpenses
-  const margin = totalRevenue > 0 ? ((grossProfit / totalRevenue) * 100).toFixed(1) : "0"
+  const totalRevenue    = bookingRevenue + receivableTotal
+  const totalExpenses   = expenses.reduce((s, e) => s + e.amount, 0)
+  const capex           = expenses.filter(e => e.phase === "capex").reduce((s, e) => s + e.amount, 0)
+  const opex            = expenses.filter(e => e.phase === "opex").reduce((s, e) => s + e.amount, 0)
+  const grossProfit     = bookingRevenue - opex
+  const netPL           = totalRevenue - totalExpenses
+  const margin          = totalRevenue > 0 ? ((grossProfit / totalRevenue) * 100).toFixed(1) : "0"
+  const totalInjected   = injections.reduce((s, i) => s + i.amount, 0)
+  const orgWallet       = totalInjected + totalRevenue - totalExpenses
 
   // Expense breakdown by category
   const byCat = expenses.reduce<Record<string, number>>((acc, e) => {
@@ -107,16 +118,21 @@ export default function FinancialsPage() {
       ) : (
         <>
           {/* KPI row */}
-          <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 xl:grid-cols-3 gap-4">
             {[
-              { label: "Total Revenue", value: `$${totalRevenue.toLocaleString()}`, icon: TrendingUpIcon, color: "vrz-green" },
-              { label: "Total Expenses", value: `$${totalExpenses.toLocaleString()}`, icon: TrendingDownIcon, color: "red" },
-              { label: "Net P&L", value: `${netPL >= 0 ? "+" : ""}$${netPL.toLocaleString()}`, icon: ActivityIcon, color: netPL >= 0 ? "vrz-green" : "red" },
-              { label: "Gross Margin", value: `${margin}%`, icon: BarChart3Icon, color: parseFloat(margin) >= 0 ? "vrz-green" : "red" },
-            ].map(({ label, value, icon: Icon, color }) => (
+              { label: "Total Revenue", value: `$${totalRevenue.toLocaleString()}`, icon: TrendingUpIcon, color: "vrz-green", sub: null },
+              { label: "Total Expenses", value: `$${totalExpenses.toLocaleString()}`, icon: TrendingDownIcon, color: "red-400", sub: null },
+              { label: "Net P&L", value: `${netPL >= 0 ? "+" : "−"}$${Math.abs(netPL).toLocaleString()}`, icon: ActivityIcon, color: netPL >= 0 ? "vrz-green" : "red-400", sub: null },
+              { label: "Partner Injections", value: `$${totalInjected.toLocaleString()}`, icon: UsersIcon, color: "blue-400", sub: "All-time capital" },
+              { label: "Org Wallet", value: `$${orgWallet.toLocaleString()}`, icon: WalletIcon, color: orgWallet >= 0 ? "vrz-amber" : "red-400", sub: "Cash on hand" },
+              { label: "Gross Margin", value: `${margin}%`, icon: BarChart3Icon, color: parseFloat(margin) >= 50 ? "vrz-green" : parseFloat(margin) >= 0 ? "vrz-amber" : "red-400", sub: null },
+            ].map(({ label, value, icon: Icon, color, sub }) => (
               <div key={label} className="rounded-xl border border-white/8 bg-white/2 p-5">
                 <div className="flex items-start justify-between mb-3">
-                  <p className="text-xs text-zinc-500 uppercase tracking-wider">{label}</p>
+                  <div>
+                    <p className="text-xs text-zinc-500 uppercase tracking-wider">{label}</p>
+                    {sub && <p className="text-xs text-zinc-700 mt-0.5">{sub}</p>}
+                  </div>
                   <Icon className={`size-4 text-${color}`} />
                 </div>
                 <p className={`font-heading text-2xl text-${color}`} style={{ fontFamily: "var(--font-heading)" }}>{value}</p>
@@ -203,21 +219,35 @@ export default function FinancialsPage() {
             <table className="w-full text-sm">
               <tbody className="divide-y divide-white/5">
                 {[
-                  { label: "Booking Revenue", value: bookingRevenue, indent: true },
-                  { label: "Other Receivables", value: receivableTotal, indent: true },
-                  { label: "Total Revenue", value: totalRevenue, bold: true },
-                  { label: "OpEx", value: -opex, indent: true, red: true },
-                  { label: "Gross Profit", value: grossProfit, bold: true },
-                  { label: "CapEx", value: -capex, indent: true, red: true },
-                  { label: "Net P&L", value: netPL, bold: true, big: true },
+                  { label: "Booking Revenue",       value: bookingRevenue,  indent: true },
+                  { label: "Other Receivables",      value: receivableTotal, indent: true },
+                  { label: "Total Revenue",          value: totalRevenue,    bold: true },
+                  { label: "OpEx",                   value: -opex,           indent: true, red: true },
+                  { label: "Gross Profit",           value: grossProfit,     bold: true },
+                  { label: "CapEx",                  value: -capex,          indent: true, red: true },
+                  { label: "Net P&L",                value: netPL,           bold: true, big: true },
                 ].map(({ label, value, indent, bold, big, red }) => (
                   <tr key={label} className={bold ? "bg-white/2" : ""}>
                     <td className={`px-5 py-3 ${indent ? "pl-8 text-zinc-400" : "text-zinc-300 font-medium"}`}>{label}</td>
                     <td className={`px-5 py-3 text-right font-${bold ? "bold" : "normal"} ${big ? "text-lg" : ""} ${red ? "text-red-400" : value >= 0 ? "text-vrz-green" : "text-red-400"}`}>
-                      {value >= 0 ? `$${value.toLocaleString()}` : `-$${Math.abs(value).toLocaleString()}`}
+                      {value >= 0 ? `$${value.toLocaleString()}` : `−$${Math.abs(value).toLocaleString()}`}
                     </td>
                   </tr>
                 ))}
+                {/* Separator */}
+                <tr className="bg-white/1">
+                  <td colSpan={2} className="px-5 py-2 text-xs text-zinc-600 uppercase tracking-wider">Cash Position (all-time capital)</td>
+                </tr>
+                <tr>
+                  <td className="px-5 py-3 pl-8 text-zinc-400">Partner Injections</td>
+                  <td className="px-5 py-3 text-right text-blue-400">${totalInjected.toLocaleString()}</td>
+                </tr>
+                <tr className="bg-white/2">
+                  <td className="px-5 py-3 text-zinc-300 font-medium">Org Wallet</td>
+                  <td className={`px-5 py-3 text-right font-bold text-lg ${orgWallet >= 0 ? "text-vrz-amber" : "text-red-400"}`}>
+                    {orgWallet >= 0 ? `$${orgWallet.toLocaleString()}` : `−$${Math.abs(orgWallet).toLocaleString()}`}
+                  </td>
+                </tr>
               </tbody>
             </table>
           </div>
