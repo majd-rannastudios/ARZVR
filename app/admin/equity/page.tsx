@@ -371,9 +371,10 @@ export default function EquityPage() {
         {/* Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 mb-6">
           {stats.map(sh => {
-            const pct     = sh.obligation > 0 ? Math.min(100, (sh.injected / sh.obligation) * 100) : (sh.injected > 0 ? 100 : 0)
-            const settled = Math.abs(sh.balance) <= 0.5
-            const ahead   = sh.balance > 0.5
+            const canSurplus = sh.sweat > 0   // only Majd can show a surplus
+            const pct        = sh.obligation > 0 ? Math.min(100, (sh.injected / sh.obligation) * 100) : (sh.injected > 0 ? 100 : 0)
+            const settled    = sh.balance >= -0.5
+            const ahead      = canSurplus && sh.balance > 0.5
             return (
               <div key={sh.id} className="rounded-xl border border-white/8 bg-white/2 p-5 space-y-4">
                 <div className="flex items-center gap-3">
@@ -405,8 +406,8 @@ export default function EquityPage() {
                     <span className="text-zinc-600">Injected ${fmt(sh.injected)}</span>
                     <span className={ahead ? "text-vrz-green" : settled ? "text-zinc-500" : "text-red-400 font-medium"}>
                       {ahead   ? `+$${fmt(sh.balance)} ahead`           :
-                       settled ? <span className="flex items-center gap-1"><CheckCircle2Icon className="size-3" />Even</span> :
-                                 `$${fmt(Math.abs(sh.balance))} behind`}
+                       settled ? <span className="flex items-center gap-1"><CheckCircle2Icon className="size-3" />Settled</span> :
+                                 `$${fmt(Math.abs(sh.balance))} needed`}
                     </span>
                   </div>
                 </div>
@@ -470,10 +471,10 @@ export default function EquityPage() {
                     <td className="px-5 py-3 text-right text-zinc-300">${fmt(sh.obligation)}</td>
                     <td className="px-5 py-3 text-right text-zinc-300">${fmt(sh.injected)}</td>
                     <td className={`px-5 py-3 text-right font-medium ${
-                      sh.balance > 0.5 ? "text-vrz-green" : sh.balance < -0.5 ? "text-red-400" : "text-zinc-500"
+                      (sh.sweat > 0 && sh.balance > 0.5) ? "text-vrz-green" : sh.balance < -0.5 ? "text-red-400" : "text-zinc-500"
                     }`}>
-                      {sh.balance > 0.5   ? `+$${fmt(sh.balance)}`          :
-                       sh.balance < -0.5  ? `−$${fmt(Math.abs(sh.balance))}` : "—"}
+                      {(sh.sweat > 0 && sh.balance > 0.5) ? `+$${fmt(sh.balance)}`          :
+                       sh.balance < -0.5                  ? `−$${fmt(Math.abs(sh.balance))}` : "—"}
                     </td>
                     {totalBudget > 0 && (
                       <td className={`px-5 py-3 text-right ${sh.stillToGo > 0.5 ? "text-blue-400" : "text-zinc-600"}`}>
