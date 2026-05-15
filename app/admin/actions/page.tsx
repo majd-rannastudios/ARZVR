@@ -53,6 +53,7 @@ export default function ActionsPage() {
   const [saving, setSaving]         = useState(false)
   const [showForm, setShowForm]     = useState(false)
   const [editTarget, setEditTarget] = useState<Action | null>(null)
+  const [viewTarget, setViewTarget] = useState<Action | null>(null)
   const [form, setForm]             = useState(BLANK)
 
   // Filters
@@ -102,6 +103,7 @@ export default function ActionsPage() {
   }
 
   function closePanel() { setShowForm(false); setEditTarget(null) }
+  function closeView()  { setViewTarget(null) }
 
   async function save(e: React.FormEvent) {
     e.preventDefault()
@@ -262,7 +264,8 @@ export default function ActionsPage() {
                 const pc = pCfg(a.priority)
                 const overdue = a.due_date && a.status !== "done" && new Date(a.due_date) < new Date()
                 return (
-                  <tr key={a.id} className="hover:bg-white/2 transition-colors group">
+                  <tr key={a.id} onClick={() => setViewTarget(a)}
+                    className="hover:bg-white/2 transition-colors group cursor-pointer">
                     <td className="px-5 py-3">
                       <div className={`w-2 h-2 rounded-full ${pc.dot}`} />
                     </td>
@@ -279,13 +282,13 @@ export default function ActionsPage() {
                     <td className="px-5 py-3">
                       <span className={`text-xs font-medium ${pc.text}`}>{pc.label}</span>
                     </td>
-                    <td className="px-5 py-3">
+                    <td className="px-5 py-3" onClick={e => e.stopPropagation()}>
                       <select value={a.status} onChange={e => quickStatus(a.id, e.target.value)}
                         className={`text-xs px-2 py-1 rounded-full border bg-transparent cursor-pointer focus:outline-none ${sc.color}`}>
                         {STATUSES.map(s => <option key={s.value} value={s.value} className="bg-zinc-950 text-white">{s.label}</option>)}
                       </select>
                     </td>
-                    <td className="px-3 py-3">
+                    <td className="px-3 py-3" onClick={e => e.stopPropagation()}>
                       <button onClick={() => openEdit(a)}
                         className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg text-zinc-600 hover:text-white hover:bg-white/5 transition-all">
                         <PencilIcon className="size-3.5" />
@@ -299,10 +302,77 @@ export default function ActionsPage() {
         </div>
       )}
 
+      {/* Detail view modal */}
+      {viewTarget && !showForm && (() => {
+        const a  = viewTarget
+        const sc = sCfg(a.status)
+        const pc = pCfg(a.priority)
+        const overdue = a.due_date && a.status !== "done" && new Date(a.due_date) < new Date()
+        return (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={closeView}>
+            <div className="w-full max-w-lg bg-zinc-950 border border-white/10 rounded-2xl p-6 shadow-2xl" onClick={e => e.stopPropagation()}>
+              {/* Header */}
+              <div className="flex items-start justify-between gap-4 mb-4">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className={`w-2.5 h-2.5 rounded-full shrink-0 mt-1 ${pc.dot}`} />
+                  <h2 className={`font-heading text-xl leading-snug ${a.status === "done" ? "line-through text-zinc-500" : "text-white"}`}
+                    style={{ fontFamily: "var(--font-heading)" }}>
+                    {a.title}
+                  </h2>
+                </div>
+                <button onClick={closeView} className="shrink-0 text-zinc-500 hover:text-white transition-colors mt-0.5">
+                  <XIcon className="size-4" />
+                </button>
+              </div>
+
+              {/* Badges */}
+              <div className="flex flex-wrap gap-2 mb-5">
+                <span className={`text-xs px-2.5 py-1 rounded-full border ${sc.color}`}>{sc.label}</span>
+                <span className={`text-xs font-medium px-2.5 py-1 rounded-full bg-white/5 border border-white/8 ${pc.text}`}>{pc.label}</span>
+                {a.owner && <span className="text-xs px-2.5 py-1 rounded-full bg-white/5 border border-white/8 text-zinc-400">{a.owner}</span>}
+                {a.due_date && (
+                  <span className={`text-xs px-2.5 py-1 rounded-full bg-white/5 border border-white/8 ${overdue ? "text-red-400" : "text-zinc-400"}`}>
+                    {overdue ? "⚠ " : ""}{format(parseISO(a.due_date), "MMM d, yyyy")}
+                  </span>
+                )}
+              </div>
+
+              {/* Description */}
+              {a.description && (
+                <div className="mb-4">
+                  <p className="text-xs text-zinc-600 uppercase tracking-wider mb-1.5">Description</p>
+                  <p className="text-sm text-zinc-300 leading-relaxed whitespace-pre-wrap">{a.description}</p>
+                </div>
+              )}
+
+              {/* Notes */}
+              {a.notes && (
+                <div className="mb-5">
+                  <p className="text-xs text-zinc-600 uppercase tracking-wider mb-1.5">Notes</p>
+                  <p className="text-sm text-zinc-400 leading-relaxed whitespace-pre-wrap">{a.notes}</p>
+                </div>
+              )}
+
+              {/* Footer */}
+              <div className="flex gap-3 pt-2 border-t border-white/5">
+                <button onClick={() => { closeView(); openEdit(a) }}
+                  className="flex items-center gap-1.5 px-4 h-9 rounded-lg bg-white/5 border border-white/10 text-zinc-300 text-sm hover:text-white hover:bg-white/10 transition-all">
+                  <PencilIcon className="size-3.5" /> Edit
+                </button>
+                <button onClick={closeView}
+                  className="ml-auto px-4 h-9 rounded-lg border border-white/10 text-zinc-500 text-sm hover:text-white transition-all">
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        )
+      })()}
+
       {/* Create / Edit slide-over */}
       {showForm && (
-        <div className="fixed inset-0 z-50 flex justify-end" onClick={closePanel}>
-          <div className="w-full max-w-md bg-black border-l border-white/8 p-6 overflow-y-auto" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 flex justify-end">
+          <div className="w-full max-w-md bg-black border-l border-white/8 p-6 overflow-y-auto">
             <div className="flex items-center justify-between mb-6">
               <h2 className="font-heading text-xl text-white" style={{ fontFamily: "var(--font-heading)" }}>
                 {editTarget ? "Edit Action" : "New Action"}
@@ -329,8 +399,8 @@ export default function ActionsPage() {
 
               <div>
                 <label className="text-xs text-zinc-500 uppercase tracking-wider mb-1.5 block">Description</label>
-                <input value={form.description} onChange={e => setField("description", e.target.value)}
-                  placeholder="More context…" className={INPUT} />
+                <textarea value={form.description} onChange={e => setField("description", e.target.value)}
+                  placeholder="More context…" rows={3} className={TEXTAREA} />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
