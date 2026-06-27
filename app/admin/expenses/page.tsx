@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { format, parseISO } from "date-fns"
 import {
   PlusIcon, Trash2Icon, ReceiptIcon, SplitIcon,
-  ChevronDownIcon, ChevronUpIcon, CheckIcon, PencilIcon, XIcon,
+  ChevronDownIcon, ChevronUpIcon, CheckIcon, PencilIcon, XIcon, BarChart3Icon,
 } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 
@@ -21,6 +21,7 @@ const CAPEX_CATEGORIES = [
   { value: "vr_guns",     label: "VR Gun Controllers" },
   { value: "furniture",   label: "Furniture & Fixtures" },
   { value: "signage",     label: "Signage & Branding" },
+  { value: "marketing",   label: "Marketing" },
   { value: "other_capex", label: "Other CapEx" },
 ]
 
@@ -36,6 +37,21 @@ const OPEX_CATEGORIES = [
 
 const ALL_CATEGORIES = [...CAPEX_CATEGORIES, ...OPEX_CATEGORIES]
 const CATEGORY_MAP   = Object.fromEntries(ALL_CATEGORIES.map(c => [c.value, c.label]))
+
+// Forecasted budget per line item. CapEx figures are one-time; OpEx figures are a
+// run-rate (see `note` for the period) — variance reads as "this period's plan vs life-to-date actual."
+const PLANNED_BUDGET: Record<string, { amount: number; note: string }> = {
+  renovation: { amount: 6220, note: "Build-out, one-time (incl. contingency)" },
+  vr_sets:    { amount: 5355, note: "One-time" },
+  vr_guns:    { amount: 1500, note: "One-time" },
+  furniture:  { amount: 2000, note: "One-time" },
+  signage:    { amount: 300,  note: "One-time" },
+  marketing:  { amount: 500,  note: "One-time" },
+  rent:       { amount: 4200, note: "Per year" },
+  salaries:   { amount: 2400, note: "Operator, first 3 months" },
+  internet:   { amount: 100,  note: "Per month" },
+  cleaning:   { amount: 200,  note: "Per month (incl. sanitization)" },
+}
 
 const PARTNERS = [
   { id: "majd",  name: "Majd Farah"   },
@@ -214,6 +230,27 @@ export default function ExpensesPage() {
   const opexTotal   = expenses.filter(e => e.phase === "opex").reduce((s, e) => s + e.amount, 0)
   const pendingReimb = expenses.flatMap(e => e.splits.filter(s => !s.reimbursed)).reduce((s, sp) => s + sp.amount, 0)
 
+  // ── budget forecast: planned vs actual per line item ────────────────────────
+  function buildForecast(cats: { value: string; label: string }[]) {
+    return cats
+      .map(c => {
+        const plan   = PLANNED_BUDGET[c.value]
+        const actual = expenses.filter(e => e.category === c.value).reduce((s, e) => s + e.amount, 0)
+        return {
+          value: c.value, label: c.label,
+          planned:  plan?.amount ?? null,
+          note:     plan?.note ?? null,
+          actual,
+          variance: plan ? plan.amount - actual : null,
+        }
+      })
+      .filter(r => r.planned !== null || r.actual > 0)
+  }
+  const capexForecast    = buildForecast(CAPEX_CATEGORIES)
+  const opexForecast     = buildForecast(OPEX_CATEGORIES)
+  const plannedCapexTotal = capexForecast.reduce((s, r) => s + (r.planned ?? 0), 0)
+  const actualCapexTotal  = capexForecast.reduce((s, r) => s + r.actual, 0)
+
   // ── shared form body (used in both create and edit panels) ─────────────────
   function FormFields({
     f, set, splitTotal, remaining,
@@ -347,6 +384,65 @@ export default function ExpensesPage() {
           )}
         </div>
       </div>
+
+      {/* Budget Forecast — planned vs actual per line item */}
+      {(capexForecast.length > 0 || opexForecast.length > 0) && (
+        <div className="rounded-xl border border-white/8 bg-white/2 overflow-hidden">
+          <div className="px-5 py-4 border-b border-white/5 flex items-center gap-2">
+            <BarChart3Icon className="size-4 text-vrz-green" />
+            <h2 className="text-sm font-semibold text-white">Budget Forecast</h2>
+            {plannedCapexTotal > 0 && (
+              <span className="ml-auto text-xs text-zinc-600">
+                CapEx <span className={actualCapexTotal > plannedCapexTotal ? "text-red-400" : "text-zinc-400"}>${actualCapexTotal.toLocaleString()}</span> of ${plannedCapexTotal.toLocaleString()} planned
+              </span>
+            )}
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-xs text-zinc-600 uppercase tracking-wider border-b border-white/5">
+                  <th className="px-5 py-3 text-left">Line Item</th>
+                  <th className="px-5 py-3 text-right">Planned</th>
+                  <th className="px-5 py-3 text-right">Actual</th>
+                  <th className="px-5 py-3 text-right">Variance</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/5">
+                {([
+                  { phase: "capex" as const, rows: capexForecast },
+                  { phase: "opex"  as const, rows: opexForecast  },
+                ]).flatMap(({ phase, rows }) => rows.map(r => {
+                  const pct  = r.planned ? Math.min(100, (r.actual / r.planned) * 100) : 0
+                  const over = r.variance !== null && r.variance < -0.5
+                  return (
+                    <tr key={r.value} className="hover:bg-white/2 transition-colors">
+                      <td className="px-5 py-3">
+                        <div className="flex items-center gap-2">
+                          <span className={`shrink-0 inline-flex px-1.5 py-0.5 rounded-sm text-[10px] font-medium ${phase === "capex" ? "bg-amber-500/10 text-amber-400" : "bg-vrz-green/10 text-vrz-green"}`}>
+                            {phase.toUpperCase()}
+                          </span>
+                          <span className="text-zinc-200">{r.label}</span>
+                        </div>
+                        {r.note && <p className="text-xs text-zinc-600 mt-0.5">{r.note}</p>}
+                        {r.planned !== null && (
+                          <div className="h-1 bg-white/5 rounded-full overflow-hidden mt-1.5 max-w-32">
+                            <div className={`h-full rounded-full ${over ? "bg-red-400/70" : "bg-vrz-green"}`} style={{ width: `${pct}%` }} />
+                          </div>
+                        )}
+                      </td>
+                      <td className="px-5 py-3 text-right text-zinc-300">{r.planned !== null ? `$${r.planned.toLocaleString()}` : "—"}</td>
+                      <td className="px-5 py-3 text-right text-zinc-300">${r.actual.toLocaleString()}</td>
+                      <td className={`px-5 py-3 text-right font-medium ${r.variance === null ? "text-zinc-600" : over ? "text-red-400" : "text-vrz-green"}`}>
+                        {r.variance === null ? "—" : over ? `−$${Math.abs(r.variance).toLocaleString()}` : `$${r.variance.toLocaleString()}`}
+                      </td>
+                    </tr>
+                  )
+                }))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
       {/* Add expense form */}
       <div className="rounded-xl border border-white/8 bg-white/2 p-6">

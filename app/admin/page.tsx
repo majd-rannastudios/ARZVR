@@ -40,7 +40,7 @@ const STATUS_COLOR: Record<string, string> = {
 
 const CATEGORY_LABELS: Record<string, string> = {
   renovation: "Renovation", vr_sets: "VR Headsets", vr_guns: "VR Guns",
-  furniture: "Furniture", signage: "Signage", other_capex: "Other CapEx",
+  furniture: "Furniture", signage: "Signage", marketing: "Marketing", other_capex: "Other CapEx",
   rent: "Rent", salaries: "Salaries", electricity: "Electricity",
   internet: "Internet", maintenance: "Maintenance", cleaning: "Cleaning", other_opex: "Other OpEx",
 }
