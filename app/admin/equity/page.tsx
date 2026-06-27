@@ -7,7 +7,7 @@ import {
   WalletIcon, AlertCircleIcon, LayoutListIcon, CheckCircle2Icon,
 } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
-import { PLANNED_CAPEX_TOTAL } from "@/lib/expense-categories"
+import { PLANNED_PRELAUNCH_TOTAL } from "@/lib/expense-categories"
 
 // ─── Shareholder config ────────────────────────────────────────────────────────
 const SWEAT_DISCOUNT = 0.15
@@ -181,10 +181,11 @@ export default function EquityPage() {
     const balance          = injected - obligation         // positive = ahead, negative = still owes
     const budgetObligation = totalBudget * capexPct       // forward-looking: full budget share
     const stillToGo        = Math.max(0, budgetObligation - injected)
-    // Forecast obligation: based on the line-item CapEx forecast (renovation, VR sets,
-    // guns, furniture, signage, marketing) maintained in lib/expense-categories.ts —
-    // independent of the ad-hoc budget_items tracker above.
-    const forecastObligation = PLANNED_CAPEX_TOTAL * capexPct
+    // Pre-launch obligation: based on the line-item forecast (build-out CapEx + the
+    // rent/operator commitments due before opening) maintained in lib/expense-categories.ts —
+    // independent of the ad-hoc budget_items tracker above. Ongoing run-rate costs
+    // (internet, cleaning) are excluded — those get covered by revenue, not equity.
+    const forecastObligation = PLANNED_PRELAUNCH_TOTAL * capexPct
     const forecastStillToGo  = Math.max(0, forecastObligation - injected)
     const profitShare      = netPL > 0 ? netPL * sh.equity : 0
     return { ...sh, capexPct, obligation, injected, balance, budgetObligation, stillToGo, forecastObligation, forecastStillToGo, profitShare }
@@ -257,11 +258,11 @@ export default function EquityPage() {
         ))}
       </div>
 
-      {/* ══ CAPEX FORECAST — STILL TO PAY ══ */}
+      {/* ══ PRE-LAUNCH BUDGET — STILL TO PAY ══ */}
       <div className="space-y-4">
         <div className="flex items-center gap-3">
-          <h2 className="text-sm font-semibold text-white">CapEx Forecast — Still to Pay</h2>
-          <span className="text-xs text-zinc-600">Based on the renovation/equipment/furniture/signage/marketing line-item forecast — ${fmt(PLANNED_CAPEX_TOTAL)} total</span>
+          <h2 className="text-sm font-semibold text-white">Pre-Launch Budget — Still to Pay</h2>
+          <span className="text-xs text-zinc-600">Build-out CapEx + 1yr rent + 3mo operator — ${fmt(PLANNED_PRELAUNCH_TOTAL)} total</span>
         </div>
 
         <div className="rounded-xl border border-white/8 bg-white/2 overflow-hidden">
@@ -271,7 +272,7 @@ export default function EquityPage() {
                 <tr className="text-xs text-zinc-600 uppercase tracking-wider border-b border-white/5">
                   <th className="px-5 py-3 text-left">Shareholder</th>
                   <th className="px-5 py-3 text-right">CapEx %</th>
-                  <th className="px-5 py-3 text-right">Forecast Share</th>
+                  <th className="px-5 py-3 text-right">Pre-Launch Share</th>
                   <th className="px-5 py-3 text-right">Injected</th>
                   <th className="px-5 py-3 text-right">Still to Pay</th>
                 </tr>
@@ -296,7 +297,7 @@ export default function EquityPage() {
                 <tr className="bg-white/2 font-medium border-t-2 border-white/10">
                   <td className="px-5 py-3 text-zinc-300">Total</td>
                   <td className="px-5 py-3 text-right text-zinc-400">100%</td>
-                  <td className="px-5 py-3 text-right text-zinc-200">${fmt(PLANNED_CAPEX_TOTAL)}</td>
+                  <td className="px-5 py-3 text-right text-zinc-200">${fmt(PLANNED_PRELAUNCH_TOTAL)}</td>
                   <td className="px-5 py-3 text-right text-zinc-200">${fmt(stats.reduce((s, sh) => s + sh.injected, 0))}</td>
                   <td className={`px-5 py-3 text-right ${forecastStillNeeded > 0.5 ? "text-blue-400" : "text-vrz-green"}`}>
                     {forecastStillNeeded > 0.5 ? `$${fmt(forecastStillNeeded)}` : "Funded ✓"}

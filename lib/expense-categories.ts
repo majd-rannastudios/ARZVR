@@ -23,20 +23,29 @@ export const CATEGORY_MAP: Record<string, string> = Object.fromEntries(ALL_CATEG
 
 // Forecasted budget per line item. CapEx figures are one-time; OpEx figures are a
 // run-rate (see `note` for the period) — variance reads as "this period's plan vs life-to-date actual."
-export const PLANNED_BUDGET: Record<string, { amount: number; note: string }> = {
-  renovation: { amount: 6220, note: "Build-out, one-time (incl. contingency)" },
-  vr_sets:    { amount: 5355, note: "One-time" },
-  vr_guns:    { amount: 1500, note: "One-time" },
-  furniture:  { amount: 2000, note: "One-time" },
-  signage:    { amount: 300,  note: "One-time" },
-  marketing:  { amount: 500,  note: "One-time" },
-  rent:       { amount: 4200, note: "Per year" },
-  salaries:   { amount: 2400, note: "Operator, first 3 months" },
-  internet:   { amount: 100,  note: "Per month" },
-  cleaning:   { amount: 200,  note: "Per month (incl. sanitization)" },
+// `prelaunch` marks costs partners must fund up front (build-out + the rent/operator
+// commitments due before revenue starts) vs. ongoing run-rate costs (internet, cleaning)
+// that kick in once the lounge is operating and gets covered by revenue, not equity.
+export const PLANNED_BUDGET: Record<string, { amount: number; note: string; prelaunch: boolean }> = {
+  renovation: { amount: 6220, note: "Build-out, one-time (incl. contingency)", prelaunch: true },
+  vr_sets:    { amount: 5355, note: "One-time",                               prelaunch: true },
+  vr_guns:    { amount: 1500, note: "One-time",                               prelaunch: true },
+  furniture:  { amount: 2000, note: "One-time",                               prelaunch: true },
+  signage:    { amount: 300,  note: "One-time",                               prelaunch: true },
+  marketing:  { amount: 500,  note: "One-time",                               prelaunch: true },
+  rent:       { amount: 4200, note: "Per year (prepaid before opening)",      prelaunch: true },
+  salaries:   { amount: 2400, note: "Operator, first 3 months",               prelaunch: true },
+  internet:   { amount: 100,  note: "Per month",                             prelaunch: false },
+  cleaning:   { amount: 200,  note: "Per month (incl. sanitization)",         prelaunch: false },
 }
 
 const CAPEX_VALUES = new Set(CAPEX_CATEGORIES.map(c => c.value))
 export const PLANNED_CAPEX_TOTAL = Object.entries(PLANNED_BUDGET)
   .filter(([cat]) => CAPEX_VALUES.has(cat))
   .reduce((sum, [, v]) => sum + v.amount, 0)
+
+// Total cash partners need to fund before the lounge opens (CapEx build-out +
+// the rent and operator commitments that fall due pre-revenue).
+export const PLANNED_PRELAUNCH_TOTAL = Object.values(PLANNED_BUDGET)
+  .filter(v => v.prelaunch)
+  .reduce((sum, v) => sum + v.amount, 0)
