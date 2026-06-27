@@ -7,6 +7,7 @@ import {
   WalletIcon, AlertCircleIcon, LayoutListIcon, CheckCircle2Icon,
 } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
+import { PLANNED_CAPEX_TOTAL } from "@/lib/expense-categories"
 
 // ─── Shareholder config ────────────────────────────────────────────────────────
 const SWEAT_DISCOUNT = 0.15
@@ -180,11 +181,17 @@ export default function EquityPage() {
     const balance          = injected - obligation         // positive = ahead, negative = still owes
     const budgetObligation = totalBudget * capexPct       // forward-looking: full budget share
     const stillToGo        = Math.max(0, budgetObligation - injected)
+    // Forecast obligation: based on the line-item CapEx forecast (renovation, VR sets,
+    // guns, furniture, signage, marketing) maintained in lib/expense-categories.ts —
+    // independent of the ad-hoc budget_items tracker above.
+    const forecastObligation = PLANNED_CAPEX_TOTAL * capexPct
+    const forecastStillToGo  = Math.max(0, forecastObligation - injected)
     const profitShare      = netPL > 0 ? netPL * sh.equity : 0
-    return { ...sh, capexPct, obligation, injected, balance, budgetObligation, stillToGo, profitShare }
+    return { ...sh, capexPct, obligation, injected, balance, budgetObligation, stillToGo, forecastObligation, forecastStillToGo, profitShare }
   }), [injectedBySh, impliedTotal, totalBudget, netPL])
 
-  const stillNeeded = stats.reduce((s, sh) => s + Math.max(0, -sh.balance), 0)
+  const stillNeeded         = stats.reduce((s, sh) => s + Math.max(0, -sh.balance), 0)
+  const forecastStillNeeded = stats.reduce((s, sh) => s + sh.forecastStillToGo, 0)
 
   if (loading) return <div className="py-20 text-center text-sm text-zinc-600">Loading…</div>
 
@@ -248,6 +255,57 @@ export default function EquityPage() {
             </p>
           </div>
         ))}
+      </div>
+
+      {/* ══ CAPEX FORECAST — STILL TO PAY ══ */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-3">
+          <h2 className="text-sm font-semibold text-white">CapEx Forecast — Still to Pay</h2>
+          <span className="text-xs text-zinc-600">Based on the renovation/equipment/furniture/signage/marketing line-item forecast — ${fmt(PLANNED_CAPEX_TOTAL)} total</span>
+        </div>
+
+        <div className="rounded-xl border border-white/8 bg-white/2 overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-xs text-zinc-600 uppercase tracking-wider border-b border-white/5">
+                  <th className="px-5 py-3 text-left">Shareholder</th>
+                  <th className="px-5 py-3 text-right">CapEx %</th>
+                  <th className="px-5 py-3 text-right">Forecast Share</th>
+                  <th className="px-5 py-3 text-right">Injected</th>
+                  <th className="px-5 py-3 text-right">Still to Pay</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/5">
+                {stats.map(sh => (
+                  <tr key={sh.id} className="hover:bg-white/2 transition-colors">
+                    <td className="px-5 py-3">
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full shrink-0" style={{ background: sh.color }} />
+                        <span className="text-zinc-200">{sh.name}</span>
+                      </div>
+                    </td>
+                    <td className="px-5 py-3 text-right text-zinc-400">{(sh.capexPct * 100).toFixed(2)}%</td>
+                    <td className="px-5 py-3 text-right text-zinc-300">${fmt(sh.forecastObligation)}</td>
+                    <td className="px-5 py-3 text-right text-zinc-300">${fmt(sh.injected)}</td>
+                    <td className={`px-5 py-3 text-right font-medium ${sh.forecastStillToGo > 0.5 ? "text-blue-400" : "text-vrz-green"}`}>
+                      {sh.forecastStillToGo > 0.5 ? `$${fmt(sh.forecastStillToGo)}` : "Funded ✓"}
+                    </td>
+                  </tr>
+                ))}
+                <tr className="bg-white/2 font-medium border-t-2 border-white/10">
+                  <td className="px-5 py-3 text-zinc-300">Total</td>
+                  <td className="px-5 py-3 text-right text-zinc-400">100%</td>
+                  <td className="px-5 py-3 text-right text-zinc-200">${fmt(PLANNED_CAPEX_TOTAL)}</td>
+                  <td className="px-5 py-3 text-right text-zinc-200">${fmt(stats.reduce((s, sh) => s + sh.injected, 0))}</td>
+                  <td className={`px-5 py-3 text-right ${forecastStillNeeded > 0.5 ? "text-blue-400" : "text-vrz-green"}`}>
+                    {forecastStillNeeded > 0.5 ? `$${fmt(forecastStillNeeded)}` : "Funded ✓"}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
 
       {/* ══ BUDGET TRACKER ══ */}

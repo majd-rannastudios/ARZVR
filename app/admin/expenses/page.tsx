@@ -7,50 +7,13 @@ import {
   ChevronDownIcon, ChevronUpIcon, CheckIcon, PencilIcon, XIcon, BarChart3Icon,
 } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
+import { CAPEX_CATEGORIES, OPEX_CATEGORIES, CATEGORY_MAP, PLANNED_BUDGET } from "@/lib/expense-categories"
 
 interface SplitEntry { name: string; amount: number; reimbursed: boolean }
 interface Expense {
   id: string; date: string; phase: string; category: string
   description: string | null; amount: number; created_at: string
   paid_by: string | null; splits: SplitEntry[]
-}
-
-const CAPEX_CATEGORIES = [
-  { value: "renovation",  label: "Renovation & Build-up" },
-  { value: "vr_sets",     label: "VR Headsets & Equipment" },
-  { value: "vr_guns",     label: "VR Gun Controllers" },
-  { value: "furniture",   label: "Furniture & Fixtures" },
-  { value: "signage",     label: "Signage & Branding" },
-  { value: "marketing",   label: "Marketing" },
-  { value: "other_capex", label: "Other CapEx" },
-]
-
-const OPEX_CATEGORIES = [
-  { value: "rent",        label: "Rent" },
-  { value: "salaries",    label: "Staff Salaries" },
-  { value: "electricity", label: "Electricity" },
-  { value: "internet",    label: "Internet & Connectivity" },
-  { value: "maintenance", label: "Equipment Maintenance" },
-  { value: "cleaning",    label: "Cleaning Services" },
-  { value: "other_opex",  label: "Other OpEx" },
-]
-
-const ALL_CATEGORIES = [...CAPEX_CATEGORIES, ...OPEX_CATEGORIES]
-const CATEGORY_MAP   = Object.fromEntries(ALL_CATEGORIES.map(c => [c.value, c.label]))
-
-// Forecasted budget per line item. CapEx figures are one-time; OpEx figures are a
-// run-rate (see `note` for the period) — variance reads as "this period's plan vs life-to-date actual."
-const PLANNED_BUDGET: Record<string, { amount: number; note: string }> = {
-  renovation: { amount: 6220, note: "Build-out, one-time (incl. contingency)" },
-  vr_sets:    { amount: 5355, note: "One-time" },
-  vr_guns:    { amount: 1500, note: "One-time" },
-  furniture:  { amount: 2000, note: "One-time" },
-  signage:    { amount: 300,  note: "One-time" },
-  marketing:  { amount: 500,  note: "One-time" },
-  rent:       { amount: 4200, note: "Per year" },
-  salaries:   { amount: 2400, note: "Operator, first 3 months" },
-  internet:   { amount: 100,  note: "Per month" },
-  cleaning:   { amount: 200,  note: "Per month (incl. sanitization)" },
 }
 
 const PARTNERS = [
