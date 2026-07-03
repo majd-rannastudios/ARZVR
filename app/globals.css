@@ -335,6 +335,51 @@
   color: #5EC4B0;
 }
 
+/* ── Duck character animations ──────────────────────────── */
+@keyframes duck-float {
+  0%, 100% {
+    transform: translateY(0px) rotate(-1.5deg) scale(1);
+  }
+  33% {
+    transform: translateY(-22px) rotate(0.5deg) scale(1.025);
+  }
+  66% {
+    transform: translateY(-10px) rotate(2deg) scale(1.01);
+  }
+}
+
+@keyframes duck-bounce-in {
+  0%   { transform: scale(0.45) translateY(50px); opacity: 0; }
+  60%  { transform: scale(1.08) translateY(-14px); opacity: 1; }
+  80%  { transform: scale(0.96) translateY(6px); }
+  100% { transform: scale(1) translateY(0); }
+}
+
+@keyframes duck-glow-pulse {
+  0%, 100% { transform: scale(1);    opacity: 0.18; }
+  50%       { transform: scale(1.12); opacity: 0.32; }
+}
+
+@keyframes duck-ring-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes duck-ring-spin-rev {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(-360deg); }
+}
+
+.duck-float {
+  animation:
+    duck-bounce-in 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) both,
+    duck-float 4.5s ease-in-out 0.9s infinite;
+}
+
+.duck-glow-pulse { animation: duck-glow-pulse 3s ease-in-out infinite; }
+.duck-ring-spin  { animation: duck-ring-spin 12s linear infinite; }
+.duck-ring-spin-rev { animation: duck-ring-spin-rev 18s linear infinite; }
+
 /* ── EVO 360 brand gradient ──────────────────────────────── */
 .evo-gradient {
   background: linear-gradient(135deg, #5EC4B0 0%, #6B8FEE 55%, #4B23A8 100%);

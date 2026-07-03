@@ -4,7 +4,6 @@ import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { useState, useEffect, useRef } from "react"
 import { MenuIcon, XIcon, UserIcon, LayoutDashboardIcon, LogOutIcon } from "lucide-react"
-import Evo360Logo from "@/components/Evo360Logo"
 import { createClient } from "@/lib/supabase/client"
 import type { User } from "@supabase/supabase-js"
 
@@ -114,7 +113,12 @@ export default function Navbar() {
           className="flex items-center"
           onClick={() => setOpen(false)}
         >
-          <Evo360Logo className="text-xl" iconSize={28} />
+          <span
+            className="font-heading text-2xl tracking-widest evo-gradient-text"
+            style={{ fontFamily: "var(--font-heading)" }}
+          >
+            EVO 360
+          </span>
         </Link>
 
         {/* Desktop links */}

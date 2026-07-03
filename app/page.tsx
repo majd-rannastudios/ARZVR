@@ -16,7 +16,7 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
 } from "lucide-react"
-import ARZLogo from "@/components/ARZLogo"
+import Image from "next/image"
 import PricingCard from "@/components/PricingCard"
 import BookingSection from "@/components/BookingSection"
 
@@ -170,43 +170,78 @@ export default function Home() {
 
         {/* Overlays */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/50 to-black" style={{ zIndex: 1 }} />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_50%_35%,#00FF7F07,transparent)]" style={{ zIndex: 1 }} />
-        <div className="absolute inset-0 opacity-[0.04]" style={{ zIndex: 1, backgroundImage: "linear-gradient(to right,#00FF7F 1px,transparent 1px),linear-gradient(to bottom,#00FF7F 1px,transparent 1px)", backgroundSize: "60px 60px" }} />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_50%_35%,#5EC4B010,transparent)]" style={{ zIndex: 1 }} />
+        <div className="absolute inset-0 opacity-[0.03]" style={{ zIndex: 1, backgroundImage: "linear-gradient(to right,#5EC4B0 1px,transparent 1px),linear-gradient(to bottom,#5EC4B0 1px,transparent 1px)", backgroundSize: "60px 60px" }} />
         <div className="absolute inset-0 noise-overlay scanlines" style={{ zIndex: 1 }} />
         <div className="absolute bottom-0 left-0 right-0 h-56 bg-gradient-to-t from-black to-transparent" style={{ zIndex: 2 }} />
 
         {/* Content */}
-        <div className="relative flex flex-col items-center text-center px-4 max-w-4xl mx-auto" style={{ zIndex: 3 }}>
-          <span className="mb-8 inline-flex items-center gap-2 rounded-full border border-vrz-green/30 bg-vrz-green/5 px-4 py-1.5 text-xs font-medium text-vrz-green uppercase tracking-widest vrz-flicker">
+        <div className="relative flex flex-col items-center text-center px-4 max-w-5xl mx-auto w-full" style={{ zIndex: 3 }}>
+
+          {/* Location badge */}
+          <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-vrz-green/30 bg-vrz-green/5 px-4 py-1.5 text-xs font-medium text-vrz-green uppercase tracking-widest vrz-flicker">
             <ZapIcon className="size-3" />
             Byblos, Lebanon
           </span>
 
-          <h1 style={{ fontFamily: "var(--font-heading)", lineHeight: 1, marginBottom: "0.15em" }}>
-            <ARZLogo
-              className="text-[clamp(6rem,20vw,14rem)] text-white tracking-wider"
-              style={{ fontFamily: "var(--font-heading)" }}
+          {/* Duck hero character */}
+          <div className="relative flex items-center justify-center mb-2">
+            {/* Outer spinning gradient ring */}
+            <div
+              className="duck-ring-spin absolute rounded-full border border-vrz-green/15"
+              style={{ width: "min(90vw, 560px)", height: "min(45vw, 286px)" }}
             />
-          </h1>
+            {/* Inner counter-spin ring */}
+            <div
+              className="duck-ring-spin-rev absolute rounded-full border border-evo-purple/10"
+              style={{ width: "min(80vw, 500px)", height: "min(40vw, 255px)" }}
+            />
+            {/* Glow blob */}
+            <div
+              className="duck-glow-pulse absolute rounded-full blur-[90px] evo-gradient"
+              style={{ width: "min(70vw, 420px)", height: "min(35vw, 214px)", opacity: 0.2 }}
+            />
+            {/* The duck */}
+            <Image
+              src="/evo360-duck.png"
+              alt="EVO 360 Mascot"
+              width={3984}
+              height={2032}
+              priority
+              className="duck-float relative z-10"
+              style={{
+                width: "min(85vw, 580px)",
+                height: "auto",
+                filter: "drop-shadow(0 16px 48px rgba(94,196,176,0.4)) drop-shadow(0 0 80px rgba(107,143,238,0.2))",
+              }}
+            />
+          </div>
 
-          <p className="font-heading text-[clamp(1.2rem,3.5vw,2.5rem)] text-vrz-green text-glow-green tracking-[0.35em] uppercase mb-8"
-            style={{ fontFamily: "var(--font-heading)" }}>
+          {/* Tagline */}
+          <p
+            className="font-heading text-[clamp(1.1rem,3vw,2.2rem)] text-vrz-green text-glow-green tracking-[0.4em] uppercase mb-6"
+            style={{ fontFamily: "var(--font-heading)" }}
+          >
             Enter the Hunt
           </p>
 
-          <p className="max-w-lg text-base text-zinc-400 leading-relaxed mb-10">
+          <p className="max-w-lg text-base text-zinc-400 leading-relaxed mb-8">
             Lebanon&apos;s most immersive VR hunting lounge. Six dedicated stations,
             zero mercy. Book your session and step into a parallel world.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4">
-            <a href="#book"
-              className="flex items-center justify-center gap-2 rounded-lg bg-vrz-green px-8 py-4 text-sm font-bold text-black hover:bg-vrz-green/90 transition-all hover:scale-105 shadow-[0_0_30px_#00FF7F30]">
+            <a
+              href="#book"
+              className="flex items-center justify-center gap-2 rounded-lg evo-gradient px-8 py-4 text-sm font-bold text-white hover:opacity-90 transition-all hover:scale-105 shadow-[0_0_30px_rgba(94,196,176,0.3)]"
+            >
               Book a Session <ArrowRightIcon className="size-4" />
             </a>
-            <a href="#experience"
-              className="flex items-center justify-center rounded-lg border border-white/15 px-8 py-4 text-sm font-medium text-zinc-300 hover:border-vrz-green/40 hover:text-vrz-green transition-all">
-              Explore VRZ
+            <a
+              href="#experience"
+              className="flex items-center justify-center rounded-lg border border-white/15 px-8 py-4 text-sm font-medium text-zinc-300 hover:border-vrz-green/40 hover:text-vrz-green transition-all"
+            >
+              Explore EVO 360
             </a>
           </div>
         </div>
@@ -324,7 +359,7 @@ export default function Home() {
             </div>
 
             {/* Embedded YouTube video */}
-            <div className="relative rounded-2xl overflow-hidden border border-white/10 aspect-video bg-black shadow-[0_0_60px_#00FF7F10]">
+            <div className="relative rounded-2xl overflow-hidden border border-white/10 aspect-video bg-black shadow-[0_0_60px_#5EC4B010]">
               <iframe
                 src="https://www.youtube.com/embed/w5xqWh8o2JY?rel=0&modestbranding=1"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

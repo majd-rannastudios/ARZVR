@@ -20,25 +20,19 @@ export default function Evo360Logo({
   style,
   iconSize = 36,
 }: Evo360LogoProps) {
-  // The source PNG is a tall sheet of 4 logo variants stacked.
-  // At display width W, natural height = W * (9665/4500).
-  // First variant occupies the top ~25% of that.
-  // We clip to show only the first logo (duck + EVO/360 text).
-  const sheetW = iconSize * 2.2          // display width of the full sheet image
-  const sheetH = sheetW * (9665 / 4500)  // natural display height of the full sheet
-  const clipH  = sheetH * 0.235          // first variant height (≈ top 23.5%)
+  // evo360-duck.png is the first logo variant, white-removed, transparent background.
+  // Native size: 3984×2032 (≈1.96:1).
+  const dispW = iconSize * 2.2
+  const dispH = dispW * (2032 / 3984)
 
   const Icon = (
-    <div
-      style={{ width: iconSize * 2.2, height: clipH, overflow: "hidden", flexShrink: 0 }}
-      className="rounded-lg bg-white"
-    >
+    <div style={{ width: dispW, height: dispH, flexShrink: 0 }}>
       <Image
-        src="/evo360-logo.png"
+        src="/evo360-duck.png"
         alt="EVO 360"
-        width={4500}
-        height={9665}
-        style={{ width: sheetW, height: "auto", display: "block" }}
+        width={3984}
+        height={2032}
+        style={{ width: dispW, height: "auto", display: "block" }}
         priority
       />
     </div>

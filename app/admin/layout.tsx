@@ -16,7 +16,6 @@ import {
   XIcon,
 } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
-import Evo360Logo from "@/components/Evo360Logo"
 
 const navItems = [
   { href: "/admin",             label: "Overview",     icon: LayoutDashboardIcon },
@@ -46,7 +45,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Logo */}
       <div className="px-4 py-5 border-b border-white/8">
         <Link href="/admin" onClick={() => setSidebarOpen(false)}>
-          <Evo360Logo className="text-lg" iconSize={24} />
+          <span
+            className="font-heading text-xl tracking-widest evo-gradient-text"
+            style={{ fontFamily: "var(--font-heading)" }}
+          >
+            EVO 360
+          </span>
         </Link>
         <p className="text-xs text-zinc-600 mt-1.5 uppercase tracking-widest pl-0.5">Admin</p>
       </div>
@@ -109,7 +113,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <button onClick={() => setSidebarOpen(true)} className="text-zinc-400">
             <MenuIcon className="size-5" />
           </button>
-          <Evo360Logo variant="text" className="text-lg" />
+          <span
+            className="font-heading text-xl tracking-widest evo-gradient-text"
+            style={{ fontFamily: "var(--font-heading)" }}
+          >
+            EVO 360
+          </span>
           {sidebarOpen && (
             <button onClick={() => setSidebarOpen(false)} className="ml-auto text-zinc-400">
               <XIcon className="size-5" />
