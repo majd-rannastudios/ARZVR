@@ -3,8 +3,8 @@
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { useState, useEffect, useRef } from "react"
-import { MenuIcon, XIcon, ZapIcon, UserIcon, LayoutDashboardIcon, LogOutIcon } from "lucide-react"
-import ARZLogo from "@/components/ARZLogo"
+import { MenuIcon, XIcon, UserIcon, LayoutDashboardIcon, LogOutIcon } from "lucide-react"
+import Evo360Logo from "@/components/Evo360Logo"
 import { createClient } from "@/lib/supabase/client"
 import type { User } from "@supabase/supabase-js"
 
@@ -111,14 +111,10 @@ export default function Navbar() {
         {/* Logo */}
         <Link
           href="/"
-          className="flex items-center gap-2 group"
+          className="flex items-center"
           onClick={() => setOpen(false)}
         >
-          <ARZLogo
-            className="font-heading text-2xl tracking-widest text-white"
-            style={{ fontFamily: "var(--font-heading)" }}
-          />
-          <ZapIcon className="size-4 text-vrz-green opacity-0 group-hover:opacity-100 transition-opacity" />
+          <Evo360Logo className="text-xl" iconSize={28} />
         </Link>
 
         {/* Desktop links */}
@@ -134,7 +130,7 @@ export default function Navbar() {
                   className={[
                     "relative px-4 py-2 text-sm font-medium transition-colors rounded-md",
                     isBook
-                      ? "ml-2 bg-vrz-green text-black hover:bg-vrz-green/90 rounded-md px-5"
+                      ? "ml-2 evo-gradient text-white hover:opacity-90 rounded-md px-5"
                       : active
                       ? "text-vrz-green"
                       : "text-zinc-400 hover:text-white",
@@ -219,7 +215,7 @@ export default function Navbar() {
                     className={[
                       "block px-4 py-3 text-sm font-medium rounded-md transition-colors",
                       isBook
-                        ? "bg-vrz-green text-black text-center mt-2"
+                        ? "evo-gradient text-white text-center mt-2"
                         : active
                         ? "text-vrz-green bg-vrz-green/5"
                         : "text-zinc-400 hover:text-white hover:bg-white/5",

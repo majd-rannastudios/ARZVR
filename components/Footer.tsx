@@ -9,10 +9,10 @@ export default function Footer() {
           {/* Brand */}
           <div className="lg:col-span-1">
             <span
-              className="font-heading text-3xl tracking-widest text-white"
+              className="font-heading text-3xl tracking-widest evo-gradient-text"
               style={{ fontFamily: "var(--font-heading)" }}
             >
-              VRZ
+              EVO 360
             </span>
             <p className="mt-3 text-sm text-zinc-500 leading-relaxed">
               The virtual inversion of reality. Enter the hunt.
@@ -80,11 +80,11 @@ export default function Footer() {
               </li>
               <li>
                 <a
-                  href="mailto:bookings@vrz.lb"
+                  href="mailto:bookings@evo360.lb"
                   className="flex items-center gap-2 hover:text-vrz-green transition-colors"
                 >
                   <MailIcon className="size-4 text-vrz-green" />
-                  bookings@vrz.lb
+                  bookings@evo360.lb
                 </a>
               </li>
             </ul>
@@ -92,7 +92,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-10 border-t border-white/5 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-600">
-          <p>© {new Date().getFullYear()} VRZ. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} EVO 360. All rights reserved.</p>
           <p>Byblos, Lebanon — Open daily 3 PM – 11 PM</p>
         </div>
       </div>

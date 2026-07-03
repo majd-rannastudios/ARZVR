@@ -68,13 +68,13 @@ export default function CustomCursor() {
       {/* ── Default: crosshair target ── */}
       {mode === "default" && (
         <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="16" cy="16" r="11" stroke="#00FF7F" strokeWidth="1.5" />
-          <circle cx="16" cy="16" r="4"  stroke="#00FF7F" strokeWidth="1.5" />
-          <circle cx="16" cy="16" r="1.5" fill="#00FF7F" />
-          <line x1="16" y1="1"  x2="16" y2="10" stroke="#00FF7F" strokeWidth="1.5" strokeLinecap="round" />
-          <line x1="16" y1="22" x2="16" y2="31" stroke="#00FF7F" strokeWidth="1.5" strokeLinecap="round" />
-          <line x1="1"  y1="16" x2="10" y2="16" stroke="#00FF7F" strokeWidth="1.5" strokeLinecap="round" />
-          <line x1="22" y1="16" x2="31" y2="16" stroke="#00FF7F" strokeWidth="1.5" strokeLinecap="round" />
+          <circle cx="16" cy="16" r="11" stroke="#5EC4B0" strokeWidth="1.5" />
+          <circle cx="16" cy="16" r="4"  stroke="#5EC4B0" strokeWidth="1.5" />
+          <circle cx="16" cy="16" r="1.5" fill="#5EC4B0" />
+          <line x1="16" y1="1"  x2="16" y2="10" stroke="#5EC4B0" strokeWidth="1.5" strokeLinecap="round" />
+          <line x1="16" y1="22" x2="16" y2="31" stroke="#5EC4B0" strokeWidth="1.5" strokeLinecap="round" />
+          <line x1="1"  y1="16" x2="10" y2="16" stroke="#5EC4B0" strokeWidth="1.5" strokeLinecap="round" />
+          <line x1="22" y1="16" x2="31" y2="16" stroke="#5EC4B0" strokeWidth="1.5" strokeLinecap="round" />
         </svg>
       )}
 
@@ -101,7 +101,7 @@ export default function CustomCursor() {
               width: 14,
               height: 14,
               borderRadius: "50%",
-              border: "1px solid #00FF7F80",
+              border: "1px solid #5EC4B080",
             }}
           />
           {/* pulsing center dot */}
@@ -112,9 +112,9 @@ export default function CustomCursor() {
       {/* ── Text: green I-beam ── */}
       {mode === "text" && (
         <svg width="16" height="26" viewBox="0 0 16 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <line x1="3"  y1="2"  x2="13" y2="2"  stroke="#00FF7F" strokeWidth="1.5" strokeLinecap="round" />
-          <line x1="8"  y1="2"  x2="8"  y2="24" stroke="#00FF7F" strokeWidth="1.5" strokeLinecap="round" />
-          <line x1="3"  y1="24" x2="13" y2="24" stroke="#00FF7F" strokeWidth="1.5" strokeLinecap="round" />
+          <line x1="3"  y1="2"  x2="13" y2="2"  stroke="#5EC4B0" strokeWidth="1.5" strokeLinecap="round" />
+          <line x1="8"  y1="2"  x2="8"  y2="24" stroke="#5EC4B0" strokeWidth="1.5" strokeLinecap="round" />
+          <line x1="3"  y1="24" x2="13" y2="24" stroke="#5EC4B0" strokeWidth="1.5" strokeLinecap="round" />
         </svg>
       )}
     </div>

@@ -46,11 +46,14 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
-  /* VRZ brand colors */
+  /* EVO 360 brand colors */
   --color-vrz-green: var(--vrz-green);
   --color-vrz-amber: var(--vrz-amber);
   --color-vrz-surface: var(--vrz-surface);
   --color-vrz-surface-2: var(--vrz-surface-2);
+  --color-evo-teal: var(--evo-teal);
+  --color-evo-purple: var(--evo-purple);
+  --color-evo-blue: var(--evo-blue);
 }
 
 :root {
@@ -81,8 +84,12 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-  /* VRZ brand */
-  --vrz-green: #00FF7F;
+  /* EVO 360 brand */
+  --evo-teal:   #5EC4B0;
+  --evo-purple: #4B23A8;
+  --evo-blue:   #6B8FEE;
+  /* vrz-green kept as alias so all existing classes recolor automatically */
+  --vrz-green: #5EC4B0;
   --vrz-amber: #FFBA00;
   --vrz-surface: #111111;
   --vrz-surface-2: #1a1a1a;
@@ -95,7 +102,7 @@
   --card-foreground: oklch(0.95 0 0);
   --popover: oklch(0.1 0 0);
   --popover-foreground: oklch(0.95 0 0);
-  --primary: #00FF7F;
+  --primary: #5EC4B0;
   --primary-foreground: oklch(0.05 0 0);
   --secondary: oklch(0.15 0 0);
   --secondary-foreground: oklch(0.95 0 0);
@@ -106,15 +113,15 @@
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 8%);
   --input: oklch(1 0 0 / 10%);
-  --ring: #00FF7F;
+  --ring: #5EC4B0;
   --sidebar: oklch(0.1 0 0);
   --sidebar-foreground: oklch(0.95 0 0);
-  --sidebar-primary: #00FF7F;
+  --sidebar-primary: #5EC4B0;
   --sidebar-primary-foreground: oklch(0.05 0 0);
   --sidebar-accent: oklch(0.15 0 0);
   --sidebar-accent-foreground: oklch(0.95 0 0);
   --sidebar-border: oklch(1 0 0 / 8%);
-  --sidebar-ring: #00FF7F;
+  --sidebar-ring: #5EC4B0;
 }
 
 @layer base {
@@ -150,8 +157,8 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  border: 1.5px dashed #00FF7F;
-  box-shadow: 0 0 6px #00FF7F40;
+  border: 1.5px dashed #5EC4B0;
+  box-shadow: 0 0 6px #5EC4B040;
   animation: vrz-spin 2s linear infinite;
 }
 
@@ -161,8 +168,8 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #00FF7F;
-  box-shadow: 0 0 8px #00FF7F, 0 0 18px #00FF7F60;
+  background: #5EC4B0;
+  box-shadow: 0 0 8px #5EC4B0, 0 0 18px #5EC4B060;
   animation: vrz-pulse 0.9s ease-in-out infinite;
 }
 
@@ -186,7 +193,7 @@
   }
   95% {
     transform: translate(-3px, 0);
-    text-shadow: 3px 0 #00FF7F;
+    text-shadow: 3px 0 #5EC4B0;
   }
   96% {
     transform: translate(3px, 0);
@@ -194,7 +201,7 @@
   }
   97% {
     transform: translate(-2px, 1px);
-    text-shadow: 2px 0 #00FF7F;
+    text-shadow: 2px 0 #5EC4B0;
   }
   98% {
     transform: translate(2px, -1px);
@@ -202,7 +209,7 @@
   }
   99% {
     transform: translate(0);
-    text-shadow: 0 0 8px #00FF7F80;
+    text-shadow: 0 0 8px #5EC4B080;
   }
 }
 
@@ -225,8 +232,8 @@
 }
 
 @keyframes pulse-green {
-  0%, 100% { box-shadow: 0 0 0 0 #00FF7F40; }
-  50% { box-shadow: 0 0 0 8px #00FF7F00; }
+  0%, 100% { box-shadow: 0 0 0 0 #5EC4B040; }
+  50% { box-shadow: 0 0 0 8px #5EC4B000; }
 }
 
 .vrz-glitch {
@@ -236,15 +243,15 @@
 /* ── Electric zap ────────────────────────────────────────── */
 @keyframes vrz-electrify {
   0%   { text-shadow: none;                                                       transform: translateX(0);   filter: none; }
-  8%   { text-shadow:  3px 0 0 #00FF7F, -3px 0 0 #fff,  0 0 14px #fff;           transform: translateX(-3px); filter: brightness(2.5); }
-  16%  { text-shadow: -4px 0 0 #fff,     4px 0 0 #00FF7F, 0 0 32px #00FF7F;      transform: translateX(3px);  filter: brightness(4); }
+  8%   { text-shadow:  3px 0 0 #5EC4B0, -3px 0 0 #fff,  0 0 14px #fff;           transform: translateX(-3px); filter: brightness(2.5); }
+  16%  { text-shadow: -4px 0 0 #fff,     4px 0 0 #5EC4B0, 0 0 32px #5EC4B0;      transform: translateX(3px);  filter: brightness(4); }
   24%  { text-shadow: none;                                                       transform: translateX(0);   filter: brightness(1); }
-  32%  { text-shadow:  2px 0 8px #00FF7F, -2px 0 0 #fff, 0 0 20px #fff;          transform: translateX(-2px); filter: brightness(2.2); }
-  40%  { text-shadow:  0 0 24px #fff,  3px 0 0 #fff,  -3px 0 0 #00FF7F;          transform: translateX(2px);  filter: brightness(3); }
+  32%  { text-shadow:  2px 0 8px #5EC4B0, -2px 0 0 #fff, 0 0 20px #fff;          transform: translateX(-2px); filter: brightness(2.2); }
+  40%  { text-shadow:  0 0 24px #fff,  3px 0 0 #fff,  -3px 0 0 #5EC4B0;          transform: translateX(2px);  filter: brightness(3); }
   48%  { text-shadow: none;                                                       transform: translateX(0);   filter: brightness(1); }
-  60%  { text-shadow:  0 0 16px #00FF7F, 2px 0 0 #00FF7F;                        transform: translateX(-1px); filter: brightness(1.6); }
+  60%  { text-shadow:  0 0 16px #5EC4B0, 2px 0 0 #5EC4B0;                        transform: translateX(-1px); filter: brightness(1.6); }
   72%  { text-shadow: none;                                                       transform: translateX(0);   filter: none; }
-  100% { text-shadow:  0 0 20px #00FF7F80, 0 0 40px #00FF7F30;                   transform: translateX(0);   filter: none; }
+  100% { text-shadow:  0 0 20px #5EC4B080, 0 0 40px #5EC4B030;                   transform: translateX(0);   filter: none; }
 }
 
 .vrz-electrify {
@@ -290,17 +297,17 @@
 
 /* VRZ green glow text */
 .text-glow-green {
-  text-shadow: 0 0 20px #00FF7F60, 0 0 40px #00FF7F30;
+  text-shadow: 0 0 20px #5EC4B060, 0 0 40px #5EC4B030;
 }
 
 /* VRZ border glow */
 .border-glow-green {
-  box-shadow: 0 0 0 1px #00FF7F40, 0 0 20px #00FF7F20;
+  box-shadow: 0 0 0 1px #5EC4B040, 0 0 20px #5EC4B020;
 }
 
 /* Active nav link indicator */
 .nav-active {
-  color: #00FF7F;
+  color: #5EC4B0;
   position: relative;
 }
 
@@ -311,19 +318,52 @@
   left: 0;
   right: 0;
   height: 2px;
-  background: #00FF7F;
-  box-shadow: 0 0 6px #00FF7F;
+  background: #5EC4B0;
+  box-shadow: 0 0 6px #5EC4B0;
 }
 
 /* Step indicator */
 .step-active {
-  background: #00FF7F;
+  background: #5EC4B0;
   color: #0A0A0A;
-  box-shadow: 0 0 12px #00FF7F60;
+  box-shadow: 0 0 12px #5EC4B060;
 }
 
 .step-done {
-  background: #00FF7F30;
-  border-color: #00FF7F;
-  color: #00FF7F;
+  background: #5EC4B030;
+  border-color: #5EC4B0;
+  color: #5EC4B0;
+}
+
+/* ── EVO 360 brand gradient ──────────────────────────────── */
+.evo-gradient {
+  background: linear-gradient(135deg, #5EC4B0 0%, #6B8FEE 55%, #4B23A8 100%);
+}
+
+.evo-gradient-text {
+  background: linear-gradient(135deg, #5EC4B0 0%, #6B8FEE 55%, #4B23A8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.evo-gradient-border {
+  border-image: linear-gradient(135deg, #5EC4B0, #6B8FEE, #4B23A8) 1;
+}
+
+/* Subtle mesh glow behind hero elements */
+.evo-glow {
+  box-shadow:
+    0 0 60px 10px rgba(94, 196, 176, 0.15),
+    0 0 120px 30px rgba(107, 143, 238, 0.10),
+    0 0 200px 60px rgba(75, 35, 168, 0.08);
+}
+
+@keyframes evo-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(94,196,176,0.4); }
+  50%       { box-shadow: 0 0 0 8px rgba(94,196,176,0); }
+}
+
+.evo-pulse {
+  animation: evo-pulse 2s ease-in-out infinite;
 }

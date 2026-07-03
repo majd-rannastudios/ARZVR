@@ -21,18 +21,18 @@ const dmSans = DM_Sans({
 })
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://vrz.lb"),
+  metadataBase: new URL("https://evo360.lb"),
   title: {
-    default: "VRZ — VR Hunting Lounge | Byblos, Lebanon",
-    template: "%s | VRZ Byblos",
+    default: "EVO 360 — VR Hunting Lounge | Byblos, Lebanon",
+    template: "%s | EVO 360 Byblos",
   },
   description:
-    "Book your VR hunting session at VRZ in Byblos, Lebanon. 6 immersive machines. Open 3PM–11PM. Single sessions and private full-space rentals available.",
+    "Book your VR hunting session at EVO 360 in Byblos, Lebanon. 6 immersive machines. Open 3PM–11PM. Single sessions and private full-space rentals available.",
   keywords: [
     "VR Byblos",
     "virtual reality Lebanon",
     "VR hunting",
-    "VRZ",
+    "EVO 360",
     "Jbeil VR",
     "book VR Lebanon",
     "VR gaming Byblos",
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    siteName: "VRZ",
+    siteName: "EVO 360",
     images: ["/og-image.jpg"],
   },
   twitter: {
@@ -55,10 +55,10 @@ export const metadata: Metadata = {
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
-  name: "VRZ",
+  name: "EVO 360",
   description:
     "VR Hunting Lounge in Byblos, Lebanon. 6 immersive VR stations available for single sessions and private full-space rentals.",
-  url: "https://vrz.lb",
+  url: "https://evo360.lb",
   address: {
     "@type": "PostalAddress",
     addressLocality: "Byblos",
