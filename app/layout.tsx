@@ -6,6 +6,7 @@ import Footer from "@/components/Footer"
 import CustomCursor from "@/components/CustomCursor"
 import AuthHashHandler from "@/components/AuthHashHandler"
 import { MessageCircleIcon } from "lucide-react"
+import { SITE_URL, SITE_NAME } from "@/lib/site"
 
 const bebasNeue = Bebas_Neue({
   weight: "400",
@@ -21,10 +22,10 @@ const dmSans = DM_Sans({
 })
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://evo360.lb"),
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: "EVO 360 — VR Hunting Lounge | Byblos, Lebanon",
-    template: "%s | EVO 360 Byblos",
+    default: `${SITE_NAME} — VR Hunting Lounge | Byblos, Lebanon`,
+    template: `%s | ${SITE_NAME}`,
   },
   description:
     "Book your VR hunting session at EVO 360 in Byblos, Lebanon. 6 immersive machines. Open 3PM–11PM. Single sessions and private full-space rentals available.",
@@ -33,6 +34,7 @@ export const metadata: Metadata = {
     "virtual reality Lebanon",
     "VR hunting",
     "EVO 360",
+    "EVO360VR",
     "Jbeil VR",
     "book VR Lebanon",
     "VR gaming Byblos",
@@ -40,8 +42,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    siteName: "EVO 360",
-    images: ["/og-image.jpg"],
+    siteName: SITE_NAME,
   },
   twitter: {
     card: "summary_large_image",
@@ -55,16 +56,19 @@ export const metadata: Metadata = {
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
-  name: "EVO 360",
+  name: SITE_NAME,
   description:
     "VR Hunting Lounge in Byblos, Lebanon. 6 immersive VR stations available for single sessions and private full-space rentals.",
-  url: "https://evo360.lb",
+  url: SITE_URL,
   address: {
     "@type": "PostalAddress",
     addressLocality: "Byblos",
     addressRegion: "North Lebanon",
     addressCountry: "LB",
   },
+  hasMap: "https://maps.app.goo.gl/Y6qvtgqZvcge1ik4A?g_st=ac",
+  telephone: "+96178880850",
+  email: "majd@rannastudios.com",
   openingHours: "Mo-Su 15:00-23:00",
   priceRange: "$$",
 }
@@ -94,7 +98,7 @@ export default function RootLayout({
 
         {/* Floating WhatsApp button */}
         <a
-          href="https://wa.me/96170000000"
+          href="https://wa.me/96178880850"
           target="_blank"
           rel="noopener noreferrer"
           aria-label="WhatsApp"
