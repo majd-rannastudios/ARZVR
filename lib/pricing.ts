@@ -1,4 +1,4 @@
-import { isSaturday, isSunday } from "date-fns"
+import { isFriday, isSaturday, isSunday } from "date-fns"
 
 export type SessionType = "single" | "private"
 
@@ -11,7 +11,7 @@ const PRIVATE_WEEKDAY: Record<number, number> = { 60: 77, 120: 145 }
 const PRIVATE_WEEKEND: Record<number, number> = { 60: 99, 120: 180 }
 
 export function isWeekend(date: Date): boolean {
-  return isSaturday(date) || isSunday(date)
+  return isFriday(date) || isSaturday(date) || isSunday(date)
 }
 
 export function getPricing(
