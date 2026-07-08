@@ -515,7 +515,7 @@ export default function Home() {
 
           <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
             {/* WhatsApp */}
-            <a href="https://wa.me/96170000000" target="_blank" rel="noopener noreferrer"
+            <a href="https://wa.me/96178880850" target="_blank" rel="noopener noreferrer"
               className="group flex flex-col gap-4 rounded-xl border border-white/10 bg-white/2 p-6 hover:border-[#25D366]/40 hover:bg-[#25D366]/5 transition-all">
               <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#25D366]/10 border border-[#25D366]/20">
                 <MessageCircleIcon className="size-5 text-[#25D366]" />
@@ -523,12 +523,12 @@ export default function Home() {
               <div>
                 <p className="text-sm font-semibold text-white mb-1">WhatsApp</p>
                 <p className="text-xs text-zinc-500 mb-2">Fastest way to reach us.</p>
-                <span className="text-xs font-medium text-[#25D366]">+961 70 000 000</span>
+                <span className="text-xs font-medium text-[#25D366]">+961 78 880 850</span>
               </div>
             </a>
 
             {/* Email */}
-            <a href="mailto:bookings@vrz.lb"
+            <a href="mailto:majd@rannastudios.com"
               className="group flex flex-col gap-4 rounded-xl border border-white/10 bg-white/2 p-6 hover:border-vrz-green/40 hover:bg-vrz-green/5 transition-all">
               <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-vrz-green/10 border border-vrz-green/20">
                 <MailIcon className="size-5 text-vrz-green" />
@@ -536,12 +536,13 @@ export default function Home() {
               <div>
                 <p className="text-sm font-semibold text-white mb-1">Email</p>
                 <p className="text-xs text-zinc-500 mb-2">For detailed inquiries.</p>
-                <span className="text-xs font-medium text-vrz-green">bookings@vrz.lb</span>
+                <span className="text-xs font-medium text-vrz-green">majd@rannastudios.com</span>
               </div>
             </a>
 
             {/* Location */}
-            <div className="flex flex-col gap-4 rounded-xl border border-white/10 bg-white/2 p-6">
+            <a href="https://maps.app.goo.gl/Y6qvtgqZvcge1ik4A?g_st=ac" target="_blank" rel="noopener noreferrer"
+              className="group flex flex-col gap-4 rounded-xl border border-white/10 bg-white/2 p-6 hover:border-vrz-green/40 hover:bg-vrz-green/5 transition-all">
               <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-vrz-green/10 border border-vrz-green/20">
                 <MapPinIcon className="size-5 text-vrz-green" />
               </div>
@@ -550,7 +551,7 @@ export default function Home() {
                 <p className="text-xs text-zinc-500">Byblos (Jbeil)</p>
                 <p className="text-xs text-zinc-600 mt-0.5">North Lebanon</p>
               </div>
-            </div>
+            </a>
 
             {/* Hours */}
             <div className="flex flex-col gap-4 rounded-xl border border-white/10 bg-white/2 p-6">

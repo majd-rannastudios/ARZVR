@@ -29,7 +29,7 @@ export default function ContactPage() {
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
         {/* WhatsApp */}
         <a
-          href="https://wa.me/96170000000"
+          href="https://wa.me/96178880850"
           target="_blank"
           rel="noopener noreferrer"
           className="group flex flex-col gap-5 rounded-xl border border-white/10 bg-white/2 p-7 hover:border-vrz-green/40 hover:bg-vrz-green/5 transition-all"
@@ -43,14 +43,14 @@ export default function ContactPage() {
               Fastest way to reach us. Send a message and we&apos;ll get back to you quickly.
             </p>
             <span className="text-sm font-medium text-vrz-green group-hover:underline">
-              +961 70 000 000
+              +961 78 880 850
             </span>
           </div>
         </a>
 
         {/* Email */}
         <a
-          href="mailto:bookings@vrz.lb"
+          href="mailto:majd@rannastudios.com"
           className="group flex flex-col gap-5 rounded-xl border border-white/10 bg-white/2 p-7 hover:border-vrz-green/40 hover:bg-vrz-green/5 transition-all"
         >
           <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-vrz-green/10 border border-vrz-green/20">
@@ -62,13 +62,18 @@ export default function ContactPage() {
               For detailed inquiries, private event requests, or group bookings.
             </p>
             <span className="text-sm font-medium text-vrz-green group-hover:underline">
-              bookings@vrz.lb
+              majd@rannastudios.com
             </span>
           </div>
         </a>
 
         {/* Location */}
-        <div className="flex flex-col gap-5 rounded-xl border border-white/10 bg-white/2 p-7">
+        <a
+          href="https://maps.app.goo.gl/Y6qvtgqZvcge1ik4A?g_st=ac"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group flex flex-col gap-5 rounded-xl border border-white/10 bg-white/2 p-7 hover:border-vrz-green/40 hover:bg-vrz-green/5 transition-all"
+        >
           <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-vrz-green/10 border border-vrz-green/20">
             <MapPinIcon className="size-6 text-vrz-green" />
           </div>
@@ -81,8 +86,11 @@ export default function ContactPage() {
               Located in the heart of Byblos — one of the world&apos;s oldest cities.
               Street-level access, easy to find.
             </p>
+            <span className="text-sm font-medium text-vrz-green group-hover:underline mt-2 inline-block">
+              Get directions →
+            </span>
           </div>
-        </div>
+        </a>
 
         {/* Hours */}
         <div className="flex flex-col gap-5 rounded-xl border border-white/10 bg-white/2 p-7">

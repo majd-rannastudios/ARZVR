@@ -27,7 +27,14 @@ export default function Footer() {
             <ul className="space-y-3 text-sm text-zinc-400">
               <li className="flex items-start gap-2">
                 <MapPinIcon className="size-4 shrink-0 text-vrz-green mt-0.5" />
-                <span>Byblos (Jbeil), Lebanon</span>
+                <a
+                  href="https://maps.app.goo.gl/Y6qvtgqZvcge1ik4A?g_st=ac"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-vrz-green transition-colors"
+                >
+                  Byblos (Jbeil), Lebanon
+                </a>
               </li>
               <li className="flex items-start gap-2">
                 <ClockIcon className="size-4 shrink-0 text-vrz-green mt-0.5" />
@@ -69,7 +76,7 @@ export default function Footer() {
             <ul className="space-y-3 text-sm text-zinc-400">
               <li>
                 <a
-                  href="https://wa.me/96170000000"
+                  href="https://wa.me/96178880850"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 hover:text-vrz-green transition-colors"
@@ -80,11 +87,11 @@ export default function Footer() {
               </li>
               <li>
                 <a
-                  href="mailto:bookings@evo360.lb"
+                  href="mailto:majd@rannastudios.com"
                   className="flex items-center gap-2 hover:text-vrz-green transition-colors"
                 >
                   <MailIcon className="size-4 text-vrz-green" />
-                  bookings@evo360.lb
+                  majd@rannastudios.com
                 </a>
               </li>
             </ul>

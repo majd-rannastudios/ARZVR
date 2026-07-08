@@ -101,11 +101,12 @@ function buildHtml(type: EmailType, b: EmailBooking): { subject: string; html: s
             <p style="margin:0 0 4px;font-size:12px;color:#555;text-transform:uppercase;letter-spacing:1px;">Location</p>
             <p style="margin:0;font-size:14px;color:#ccc;">VRZ — VR Hunting Lounge, Byblos, Lebanon</p>
             <p style="margin:4px 0 0;font-size:13px;color:#555;">Open daily 3 PM – 11 PM</p>
+            <p style="margin:8px 0 0;font-size:13px;"><a href="https://maps.app.goo.gl/Y6qvtgqZvcge1ik4A?g_st=ac" style="color:${color};text-decoration:none;">Get directions →</a></p>
           </div>
 
           <!-- WhatsApp CTA -->
           <p style="margin:0;font-size:13px;color:#555;">
-            Questions? <a href="https://wa.me/96170000000" style="color:${color};text-decoration:none;">WhatsApp us →</a>
+            Questions? <a href="https://wa.me/96178880850" style="color:${color};text-decoration:none;">WhatsApp us →</a>
           </p>
 
         </td></tr>
