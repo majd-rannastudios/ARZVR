@@ -97,6 +97,7 @@ export default function Home() {
   const carouselRef = useRef<HTMLDivElement>(null)
   const userActive = useRef(false)
   const rafRef = useRef<number | undefined>(undefined)
+  const headRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const el = carouselRef.current
@@ -129,6 +130,38 @@ export default function Home() {
       el.removeEventListener("mouseleave", resume)
       el.removeEventListener("touchstart", pause)
       el.removeEventListener("touchend", resume)
+    }
+  }, [])
+
+  // Duck head eases toward the cursor within a small radius
+  useEffect(() => {
+    const maxOffset = 28
+    let targetX = 0
+    let targetY = 0
+    let curX = 0
+    let curY = 0
+    let raf: number
+
+    function onPointerMove(e: PointerEvent) {
+      targetX = (e.clientX / window.innerWidth - 0.5) * 2 * maxOffset
+      targetY = (e.clientY / window.innerHeight - 0.5) * 2 * maxOffset
+    }
+
+    function animate() {
+      curX += (targetX - curX) * 0.08
+      curY += (targetY - curY) * 0.08
+      if (headRef.current) {
+        headRef.current.style.transform = `translate(${curX.toFixed(2)}px, ${curY.toFixed(2)}px)`
+      }
+      raf = requestAnimationFrame(animate)
+    }
+
+    window.addEventListener("pointermove", onPointerMove)
+    raf = requestAnimationFrame(animate)
+
+    return () => {
+      window.removeEventListener("pointermove", onPointerMove)
+      cancelAnimationFrame(raf)
     }
   }, [])
 
@@ -189,32 +222,34 @@ export default function Home() {
             {/* Outer spinning gradient ring */}
             <div
               className="duck-ring-spin absolute rounded-full border border-vrz-green/15"
-              style={{ width: "min(90vw, 560px)", height: "min(45vw, 286px)" }}
+              style={{ width: "min(60vw, 360px)", height: "min(60vw, 360px)" }}
             />
             {/* Inner counter-spin ring */}
             <div
               className="duck-ring-spin-rev absolute rounded-full border border-evo-purple/10"
-              style={{ width: "min(80vw, 500px)", height: "min(40vw, 255px)" }}
+              style={{ width: "min(52vw, 310px)", height: "min(52vw, 310px)" }}
             />
             {/* Glow blob */}
             <div
               className="duck-glow-pulse absolute rounded-full blur-[90px] evo-gradient"
-              style={{ width: "min(70vw, 420px)", height: "min(35vw, 214px)", opacity: 0.2 }}
+              style={{ width: "min(42vw, 250px)", height: "min(42vw, 250px)", opacity: 0.2 }}
             />
-            {/* The duck */}
-            <Image
-              src="/evo360-duck.png"
-              alt="EVO 360 Mascot"
-              width={3984}
-              height={2032}
-              priority
-              className="duck-float relative z-10"
-              style={{
-                width: "min(85vw, 580px)",
-                height: "auto",
-                filter: "drop-shadow(0 16px 48px rgba(94,196,176,0.4)) drop-shadow(0 0 80px rgba(107,143,238,0.2))",
-              }}
-            />
+            {/* The duck head — eases toward the cursor */}
+            <div ref={headRef} className="relative z-10" style={{ willChange: "transform" }}>
+              <Image
+                src="/evo360-duck-head.png"
+                alt="EVO 360 Mascot"
+                width={1328}
+                height={1519}
+                priority
+                className="duck-float"
+                style={{
+                  width: "min(50vw, 300px)",
+                  height: "auto",
+                  filter: "drop-shadow(0 16px 48px rgba(94,196,176,0.4)) drop-shadow(0 0 80px rgba(107,143,238,0.2))",
+                }}
+              />
+            </div>
           </div>
 
           {/* Tagline */}
