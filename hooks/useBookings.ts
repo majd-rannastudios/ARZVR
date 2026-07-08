@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback } from "react"
 import { format } from "date-fns"
 import { createClient } from "@/lib/supabase/client"
-import { sendBookingEmail } from "@/lib/sendEmail"
 
 export interface Booking {
   id: string
@@ -64,21 +63,12 @@ export function useBookings() {
   }, [])
 
   const addBooking = useCallback(async (booking: Booking) => {
-    const supabase = createClient()
-    await supabase.from("bookings").insert({
-      id: booking.id,
-      date: booking.date,
-      start_time: booking.startTime,
-      end_time: booking.endTime,
-      session_type: booking.sessionType,
-      machine_count: booking.machineCount,
-      name: booking.name,
-      phone: booking.phone,
-      email: booking.email,
-      total_price: booking.totalPrice,
-      duration_minutes: booking.durationMinutes,
-      status: "confirmed",
-      created_at: booking.createdAt,
+    // Server route creates/finds a Supabase Auth user for this email, inserts
+    // the booking, and sends the confirmation email — all with the service role.
+    await fetch("/api/bookings", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(booking),
     })
 
     // Mirror to localStorage so /bookings page works without auth
@@ -86,13 +76,6 @@ export function useBookings() {
     localStorage.setItem(LS_KEY, JSON.stringify([booking, ...stored]))
 
     setBookings((prev) => [booking, ...prev])
-
-    sendBookingEmail("confirmed", {
-      id: booking.id, name: booking.name, email: booking.email,
-      date: booking.date, start_time: booking.startTime, end_time: booking.endTime,
-      session_type: booking.sessionType, machine_count: booking.machineCount,
-      total_price: booking.totalPrice, duration_minutes: booking.durationMinutes,
-    })
   }, [])
 
   const cancelBooking = useCallback(async (id: string) => {

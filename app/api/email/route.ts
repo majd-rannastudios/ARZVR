@@ -125,13 +125,8 @@ function buildHtml(type: EmailType, b: EmailBooking): { subject: string; html: s
   return { subject, html }
 }
 
-export async function POST(req: NextRequest) {
-  if (!process.env.RESEND_API_KEY) {
-    return NextResponse.json({ ok: false, error: "Email not configured" }, { status: 200 })
-  }
-
-  const { type, booking }: { type: EmailType; booking: EmailBooking } = await req.json()
-  if (!booking?.email) return NextResponse.json({ ok: false, error: "No email" }, { status: 200 })
+export async function sendConfirmationEmail(type: EmailType, booking: EmailBooking) {
+  if (!process.env.RESEND_API_KEY) return { ok: false, error: "Email not configured" }
 
   const { subject, html } = buildHtml(type, booking)
 
@@ -139,8 +134,16 @@ export async function POST(req: NextRequest) {
   const { error } = await resend.emails.send({ from: FROM, to: booking.email, subject, html })
   if (error) {
     console.error("Email send error:", error)
-    return NextResponse.json({ ok: false, error: error.message }, { status: 200 })
+    return { ok: false, error: error.message }
   }
 
-  return NextResponse.json({ ok: true })
+  return { ok: true }
+}
+
+export async function POST(req: NextRequest) {
+  const { type, booking }: { type: EmailType; booking: EmailBooking } = await req.json()
+  if (!booking?.email) return NextResponse.json({ ok: false, error: "No email" }, { status: 200 })
+
+  const result = await sendConfirmationEmail(type, booking)
+  return NextResponse.json(result, { status: 200 })
 }
