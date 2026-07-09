@@ -27,24 +27,18 @@ const navItems = [
   { href: "/admin/equity",      label: "Equity",       icon: PieChartIcon },
 ]
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname()
-  const router = useRouter()
-  const [sidebarOpen, setSidebarOpen] = useState(false)
-
-  if (pathname === "/admin/login") return <>{children}</>
-
+function Sidebar({ pathname, onNavigate }: { pathname: string; onNavigate: () => void }) {
   async function logout() {
     const supabase = createClient()
     await supabase.auth.signOut()
     window.location.href = "/admin/login"
   }
 
-  const Sidebar = () => (
+  return (
     <aside className="flex flex-col h-full bg-black border-r border-white/8">
       {/* Logo */}
       <div className="px-4 py-5 border-b border-white/8">
-        <Link href="/admin" onClick={() => setSidebarOpen(false)}>
+        <Link href="/admin" onClick={onNavigate}>
           <span
             className="font-heading text-xl tracking-widest evo-gradient-text"
             style={{ fontFamily: "var(--font-heading)" }}
@@ -63,7 +57,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <Link
               key={href}
               href={href}
-              onClick={() => setSidebarOpen(false)}
+              onClick={onNavigate}
               className={[
                 "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all",
                 active
@@ -90,18 +84,26 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </div>
     </aside>
   )
+}
+
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname()
+  const router = useRouter()
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+
+  if (pathname === "/admin/login") return <>{children}</>
 
   return (
     <div className="min-h-screen bg-black flex">
       {/* Desktop sidebar */}
       <div className="hidden md:flex w-56 shrink-0 fixed inset-y-0 left-0 z-30">
-        <Sidebar />
+        <Sidebar pathname={pathname} onNavigate={() => setSidebarOpen(false)} />
       </div>
 
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div className="md:hidden fixed inset-0 z-40 flex">
-          <div className="w-56 shrink-0"><Sidebar /></div>
+          <div className="w-56 shrink-0"><Sidebar pathname={pathname} onNavigate={() => setSidebarOpen(false)} /></div>
           <div className="flex-1 bg-black/60" onClick={() => setSidebarOpen(false)} />
         </div>
       )}

@@ -219,16 +219,6 @@ export default function Home() {
 
           {/* Duck hero character */}
           <div className="relative flex items-center justify-center mb-2">
-            {/* Outer spinning gradient ring */}
-            <div
-              className="duck-ring-spin absolute rounded-full border border-vrz-green/15"
-              style={{ width: "min(60vw, 360px)", height: "min(60vw, 360px)" }}
-            />
-            {/* Inner counter-spin ring */}
-            <div
-              className="duck-ring-spin-rev absolute rounded-full border border-evo-purple/10"
-              style={{ width: "min(52vw, 310px)", height: "min(52vw, 310px)" }}
-            />
             {/* Glow blob */}
             <div
               className="duck-glow-pulse absolute rounded-full blur-[90px] evo-gradient"

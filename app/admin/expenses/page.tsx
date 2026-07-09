@@ -42,6 +42,120 @@ const BLANK_FORM: ExpenseFields = {
   isSplit: false, splits: [{ name: "", amount: "" }],
 }
 
+// ─── Form field group (used by both create and edit) ──────────────────────────
+function FormFields({
+  f, set, remaining,
+}: {
+  f: ExpenseFields
+  set: (k: keyof ExpenseFields, v: unknown) => void
+  splitTotal: number
+  remaining: number
+}) {
+  const cats = f.phase === "capex" ? CAPEX_CATEGORIES : OPEX_CATEGORIES
+  return (
+    <div className="space-y-4">
+      {/* Phase */}
+      <div>
+        <label className="text-xs text-zinc-500 uppercase tracking-wider mb-1.5 block">Phase</label>
+        <div className="inline-flex rounded-lg border border-white/10 p-1 gap-1">
+          {(["opex", "capex"] as const).map(p => (
+            <button key={p} type="button" onClick={() => { set("phase", p); set("category", "") }}
+              className={`px-4 py-1.5 rounded-md text-xs font-medium transition-all ${f.phase === p ? "bg-vrz-green text-black" : "text-zinc-400 hover:text-white"}`}>
+              {p === "capex" ? "CapEx" : "OpEx"}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label className="text-xs text-zinc-500 uppercase tracking-wider mb-1.5 block">Date</label>
+          <input type="date" value={f.date} onChange={e => set("date", e.target.value)} required className={INPUT_CLS} />
+        </div>
+        <div>
+          <label className="text-xs text-zinc-500 uppercase tracking-wider mb-1.5 block">Category</label>
+          <select value={f.category} onChange={e => set("category", e.target.value)} required className={SELECT_CLS}>
+            <option value="">Select category…</option>
+            {cats.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
+          </select>
+        </div>
+        <div>
+          <label className="text-xs text-zinc-500 uppercase tracking-wider mb-1.5 block">Amount (USD)</label>
+          <input type="number" min="0" step="0.01" value={f.amount}
+            onChange={e => set("amount", e.target.value)} placeholder="0.00" required className={INPUT_CLS} />
+        </div>
+        <div>
+          <label className="text-xs text-zinc-500 uppercase tracking-wider mb-1.5 block">Description</label>
+          <input type="text" value={f.description}
+            onChange={e => set("description", e.target.value)} placeholder="Notes…" className={INPUT_CLS} />
+        </div>
+      </div>
+
+      {/* Paid by */}
+      {!f.isSplit && (
+        <div>
+          <label className="text-xs text-zinc-500 uppercase tracking-wider mb-1.5 block">Paid By</label>
+          <select value={f.paidBy} onChange={e => set("paidBy", e.target.value)} className={SELECT_CLS}>
+            <option value="Organization">Organization (shared wallet)</option>
+            {PARTNERS.map(p => (
+              <option key={p.id} value={p.name}>{p.name} — auto-injects to equity</option>
+            ))}
+          </select>
+          {isPartner(f.paidBy) && (
+            <p className="text-xs text-blue-400 mt-1.5">
+              ${f.amount || "0"} will be added to {firstName(f.paidBy)}&apos;s equity injections automatically.
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* Split toggle */}
+      <div>
+        <button type="button" onClick={() => set("isSplit", !f.isSplit)}
+          className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-xs font-medium transition-all ${f.isSplit ? "border-vrz-green/40 bg-vrz-green/5 text-vrz-green" : "border-white/10 text-zinc-400 hover:border-white/20 hover:text-white"}`}>
+          <SplitIcon className="size-3.5" />
+          {f.isSplit ? "Split enabled" : "Split between multiple payers"}
+        </button>
+      </div>
+
+      {/* Split rows */}
+      {f.isSplit && (
+        <div className="rounded-lg border border-white/8 bg-white/2 p-4 space-y-3">
+          <p className="text-xs text-zinc-500 uppercase tracking-wider">Payers</p>
+          {f.splits.map((row, i) => (
+            <div key={i} className="flex gap-2">
+              <input type="text" value={row.name}
+                onChange={e => set("splits", f.splits.map((r, idx) => idx === i ? { ...r, name: e.target.value } : r))}
+                placeholder="Name (or Organization)" className={`${INPUT_CLS} flex-1`} />
+              <button type="button"
+                onClick={() => set("splits", f.splits.map((r, idx) => idx === i ? { ...r, name: "Organization" } : r))}
+                className="px-2 h-10 rounded-lg border border-white/10 text-xs text-zinc-400 hover:border-white/20 hover:text-white transition-all shrink-0">Org</button>
+              <input type="number" min="0" step="0.01" value={row.amount}
+                onChange={e => set("splits", f.splits.map((r, idx) => idx === i ? { ...r, amount: e.target.value } : r))}
+                placeholder="Amount" className={`${INPUT_CLS} w-28`} />
+              {f.splits.length > 1 && (
+                <button type="button" onClick={() => set("splits", f.splits.filter((_, idx) => idx !== i))}
+                  className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 text-zinc-600 hover:text-red-400 hover:border-red-500/20 transition-all shrink-0">
+                  <Trash2Icon className="size-3.5" />
+                </button>
+              )}
+            </div>
+          ))}
+          <div className="flex items-center justify-between">
+            <button type="button" onClick={() => set("splits", [...f.splits, { name: "", amount: "" }])}
+              className="text-xs text-vrz-green hover:text-vrz-green/80 transition-colors flex items-center gap-1">
+              <PlusIcon className="size-3" /> Add payer
+            </button>
+            <span className={`text-xs font-medium ${Math.abs(remaining) < 0.01 ? "text-vrz-green" : "text-orange-400"}`}>
+              {Math.abs(remaining) < 0.01 ? "✓ Balanced" : remaining > 0 ? `$${remaining.toFixed(2)} unallocated` : `$${Math.abs(remaining).toFixed(2)} over`}
+            </span>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function ExpensesPage() {
   const [expenses,    setExpenses]    = useState<Expense[]>([])
   const [loading,     setLoading]     = useState(true)
@@ -213,120 +327,6 @@ export default function ExpensesPage() {
   const opexForecast     = buildForecast(OPEX_CATEGORIES)
   const plannedCapexTotal = capexForecast.reduce((s, r) => s + (r.planned ?? 0), 0)
   const actualCapexTotal  = capexForecast.reduce((s, r) => s + r.actual, 0)
-
-  // ── shared form body (used in both create and edit panels) ─────────────────
-  function FormFields({
-    f, set, splitTotal, remaining,
-  }: {
-    f: ExpenseFields
-    set: (k: keyof ExpenseFields, v: unknown) => void
-    splitTotal: number
-    remaining: number
-  }) {
-    const cats = f.phase === "capex" ? CAPEX_CATEGORIES : OPEX_CATEGORIES
-    return (
-      <div className="space-y-4">
-        {/* Phase */}
-        <div>
-          <label className="text-xs text-zinc-500 uppercase tracking-wider mb-1.5 block">Phase</label>
-          <div className="inline-flex rounded-lg border border-white/10 p-1 gap-1">
-            {(["opex", "capex"] as const).map(p => (
-              <button key={p} type="button" onClick={() => { set("phase", p); set("category", "") }}
-                className={`px-4 py-1.5 rounded-md text-xs font-medium transition-all ${f.phase === p ? "bg-vrz-green text-black" : "text-zinc-400 hover:text-white"}`}>
-                {p === "capex" ? "CapEx" : "OpEx"}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label className="text-xs text-zinc-500 uppercase tracking-wider mb-1.5 block">Date</label>
-            <input type="date" value={f.date} onChange={e => set("date", e.target.value)} required className={INPUT_CLS} />
-          </div>
-          <div>
-            <label className="text-xs text-zinc-500 uppercase tracking-wider mb-1.5 block">Category</label>
-            <select value={f.category} onChange={e => set("category", e.target.value)} required className={SELECT_CLS}>
-              <option value="">Select category…</option>
-              {cats.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
-            </select>
-          </div>
-          <div>
-            <label className="text-xs text-zinc-500 uppercase tracking-wider mb-1.5 block">Amount (USD)</label>
-            <input type="number" min="0" step="0.01" value={f.amount}
-              onChange={e => set("amount", e.target.value)} placeholder="0.00" required className={INPUT_CLS} />
-          </div>
-          <div>
-            <label className="text-xs text-zinc-500 uppercase tracking-wider mb-1.5 block">Description</label>
-            <input type="text" value={f.description}
-              onChange={e => set("description", e.target.value)} placeholder="Notes…" className={INPUT_CLS} />
-          </div>
-        </div>
-
-        {/* Paid by */}
-        {!f.isSplit && (
-          <div>
-            <label className="text-xs text-zinc-500 uppercase tracking-wider mb-1.5 block">Paid By</label>
-            <select value={f.paidBy} onChange={e => set("paidBy", e.target.value)} className={SELECT_CLS}>
-              <option value="Organization">Organization (shared wallet)</option>
-              {PARTNERS.map(p => (
-                <option key={p.id} value={p.name}>{p.name} — auto-injects to equity</option>
-              ))}
-            </select>
-            {isPartner(f.paidBy) && (
-              <p className="text-xs text-blue-400 mt-1.5">
-                ${f.amount || "0"} will be added to {firstName(f.paidBy)}&apos;s equity injections automatically.
-              </p>
-            )}
-          </div>
-        )}
-
-        {/* Split toggle */}
-        <div>
-          <button type="button" onClick={() => set("isSplit", !f.isSplit)}
-            className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-xs font-medium transition-all ${f.isSplit ? "border-vrz-green/40 bg-vrz-green/5 text-vrz-green" : "border-white/10 text-zinc-400 hover:border-white/20 hover:text-white"}`}>
-            <SplitIcon className="size-3.5" />
-            {f.isSplit ? "Split enabled" : "Split between multiple payers"}
-          </button>
-        </div>
-
-        {/* Split rows */}
-        {f.isSplit && (
-          <div className="rounded-lg border border-white/8 bg-white/2 p-4 space-y-3">
-            <p className="text-xs text-zinc-500 uppercase tracking-wider">Payers</p>
-            {f.splits.map((row, i) => (
-              <div key={i} className="flex gap-2">
-                <input type="text" value={row.name}
-                  onChange={e => set("splits", f.splits.map((r, idx) => idx === i ? { ...r, name: e.target.value } : r))}
-                  placeholder="Name (or Organization)" className={`${INPUT_CLS} flex-1`} />
-                <button type="button"
-                  onClick={() => set("splits", f.splits.map((r, idx) => idx === i ? { ...r, name: "Organization" } : r))}
-                  className="px-2 h-10 rounded-lg border border-white/10 text-xs text-zinc-400 hover:border-white/20 hover:text-white transition-all shrink-0">Org</button>
-                <input type="number" min="0" step="0.01" value={row.amount}
-                  onChange={e => set("splits", f.splits.map((r, idx) => idx === i ? { ...r, amount: e.target.value } : r))}
-                  placeholder="Amount" className={`${INPUT_CLS} w-28`} />
-                {f.splits.length > 1 && (
-                  <button type="button" onClick={() => set("splits", f.splits.filter((_, idx) => idx !== i))}
-                    className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 text-zinc-600 hover:text-red-400 hover:border-red-500/20 transition-all shrink-0">
-                    <Trash2Icon className="size-3.5" />
-                  </button>
-                )}
-              </div>
-            ))}
-            <div className="flex items-center justify-between">
-              <button type="button" onClick={() => set("splits", [...f.splits, { name: "", amount: "" }])}
-                className="text-xs text-vrz-green hover:text-vrz-green/80 transition-colors flex items-center gap-1">
-                <PlusIcon className="size-3" /> Add payer
-              </button>
-              <span className={`text-xs font-medium ${Math.abs(remaining) < 0.01 ? "text-vrz-green" : "text-orange-400"}`}>
-                {Math.abs(remaining) < 0.01 ? "✓ Balanced" : remaining > 0 ? `$${remaining.toFixed(2)} unallocated` : `$${Math.abs(remaining).toFixed(2)} over`}
-              </span>
-            </div>
-          </div>
-        )}
-      </div>
-    )
-  }
 
   const cSplitTotal = createForm.splits.reduce((s, r) => s + (parseFloat(r.amount) || 0), 0)
   const cRemaining  = (parseFloat(createForm.amount) || 0) - cSplitTotal

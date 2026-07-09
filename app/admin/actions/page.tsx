@@ -47,6 +47,25 @@ const TEXTAREA = "w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 
 
 const BLANK = { title: "", description: "", due_date: "", status: "open", owner: "", priority: "medium", notes: "" }
 
+function SortBtn({
+  field, label, sortField, sortAsc, onToggle,
+}: {
+  field: SortField
+  label: string
+  sortField: SortField
+  sortAsc: boolean
+  onToggle: (field: SortField) => void
+}) {
+  const active = sortField === field
+  const Icon = active ? (sortAsc ? ArrowUpIcon : ArrowDownIcon) : ArrowUpDownIcon
+  return (
+    <button onClick={() => onToggle(field)}
+      className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${active ? "border-vrz-green/30 bg-vrz-green/10 text-vrz-green" : "border-white/10 text-zinc-500 hover:text-white hover:border-white/20"}`}>
+      {label} <Icon className="size-3" />
+    </button>
+  )
+}
+
 export default function ActionsPage() {
   const [actions, setActions]       = useState<Action[]>([])
   const [loading, setLoading]       = useState(true)
@@ -170,17 +189,6 @@ export default function ActionsPage() {
     else { setSortField(f); setSortAsc(false) }
   }
 
-  function SortBtn({ field, label }: { field: SortField; label: string }) {
-    const active = sortField === field
-    const Icon = active ? (sortAsc ? ArrowUpIcon : ArrowDownIcon) : ArrowUpDownIcon
-    return (
-      <button onClick={() => toggleSort(field)}
-        className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${active ? "border-vrz-green/30 bg-vrz-green/10 text-vrz-green" : "border-white/10 text-zinc-500 hover:text-white hover:border-white/20"}`}>
-        {label} <Icon className="size-3" />
-      </button>
-    )
-  }
-
   const counts = { open: 0, in_progress: 0, blocked: 0, done: 0 }
   actions.forEach(a => { if (a.status in counts) counts[a.status as keyof typeof counts]++ })
 
@@ -232,11 +240,11 @@ export default function ActionsPage() {
       {/* Sort controls */}
       <div className="flex items-center gap-2 flex-wrap">
         <span className="text-xs text-zinc-600">Sort:</span>
-        <SortBtn field="priority"   label="Priority" />
-        <SortBtn field="due_date"   label="Due date" />
-        <SortBtn field="status"     label="Status" />
-        <SortBtn field="title"      label="Title" />
-        <SortBtn field="created_at" label="Created" />
+        <SortBtn field="priority"   label="Priority" sortField={sortField} sortAsc={sortAsc} onToggle={toggleSort} />
+        <SortBtn field="due_date"   label="Due date" sortField={sortField} sortAsc={sortAsc} onToggle={toggleSort} />
+        <SortBtn field="status"     label="Status" sortField={sortField} sortAsc={sortAsc} onToggle={toggleSort} />
+        <SortBtn field="title"      label="Title" sortField={sortField} sortAsc={sortAsc} onToggle={toggleSort} />
+        <SortBtn field="created_at" label="Created" sortField={sortField} sortAsc={sortAsc} onToggle={toggleSort} />
       </div>
 
       {/* List */}
