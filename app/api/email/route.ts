@@ -1,6 +1,6 @@
 import { Resend } from "resend"
 import { NextRequest, NextResponse } from "next/server"
-import { EMAIL_FROM } from "@/lib/site"
+import { EMAIL_FROM, SITE_URL } from "@/lib/site"
 
 const FROM = EMAIL_FROM
 
@@ -114,7 +114,7 @@ function buildHtml(type: EmailType, b: EmailBooking): { subject: string; html: s
 
         <!-- Footer -->
         <tr><td style="padding-top:24px;text-align:center;">
-          <p style="margin:0;font-size:11px;color:#333;">EVO 360 · Byblos, Lebanon · vrz.lb</p>
+          <p style="margin:0;font-size:11px;color:#333;">EVO 360 · Byblos, Lebanon · ${SITE_URL.replace("https://", "")}</p>
         </td></tr>
 
       </table>
