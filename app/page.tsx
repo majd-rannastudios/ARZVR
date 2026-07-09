@@ -19,6 +19,7 @@ import {
 import Image from "next/image"
 import PricingCard from "@/components/PricingCard"
 import BookingSection from "@/components/BookingSection"
+import EventInquirySection from "@/components/EventInquirySection"
 
 // ── Data ─────────────────────────────────────────────────────────────────────
 const features = [
@@ -26,19 +27,16 @@ const features = [
     icon: ZapIcon,
     title: "The Experience",
     desc: "Step into photo-realistic VR environments — dense forests, open terrain, mountain landscapes. Full spatial audio, 360° vision, physical motion tracking.",
-    stat: "Full immersion",
   },
   {
     icon: MonitorIcon,
     title: "The Machines",
     desc: "Six high-spec, independently operated VR stations. Book one, two, or take over the entire lounge for a private experience.",
-    stat: "6 stations",
   },
   {
     icon: SwordsIcon,
     title: "The Hunt",
     desc: "Track, aim, and eliminate. Every session is a mission. The virtual world doesn't forgive hesitation — and neither do we.",
-    stat: "Pure adrenaline",
   },
 ]
 
@@ -270,12 +268,6 @@ export default function Home() {
             </a>
           </div>
         </div>
-
-        {/* Scroll hint */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-zinc-700" style={{ zIndex: 3 }}>
-          <div className="h-10 w-px bg-gradient-to-b from-transparent to-vrz-green/40" />
-          <span className="text-xs uppercase tracking-widest">Scroll</span>
-        </div>
       </section>
 
       {/* ══════════════════════════════════════════════════════
@@ -399,7 +391,7 @@ export default function Home() {
         {/* Feature cards */}
         <div className="mx-auto max-w-6xl mb-24">
           <div className="grid grid-cols-1 gap-px sm:grid-cols-3 rounded-xl overflow-hidden border border-white/5">
-            {features.map(({ icon: Icon, title, desc, stat }, i) => (
+            {features.map(({ icon: Icon, title, desc }, i) => (
               <div key={title} className="relative flex flex-col gap-4 bg-black p-8 hover:bg-white/2 transition-colors group">
                 <span className="absolute top-6 right-6 font-heading text-5xl text-white/5 group-hover:text-vrz-green/10 transition-colors"
                   style={{ fontFamily: "var(--font-heading)" }}>
@@ -409,7 +401,6 @@ export default function Home() {
                   <Icon className="size-5 text-zinc-400 group-hover:text-vrz-green transition-colors" />
                 </div>
                 <div>
-                  <p className="text-xs text-vrz-green font-medium uppercase tracking-wider mb-1">{stat}</p>
                   <h3 className="font-heading text-2xl text-white mb-2" style={{ fontFamily: "var(--font-heading)" }}>{title}</h3>
                   <p className="text-sm text-zinc-500 leading-relaxed">{desc}</p>
                 </div>
@@ -419,6 +410,11 @@ export default function Home() {
         </div>
 
       </section>
+
+      {/* ══════════════════════════════════════════════════════
+          EVENTS — off-site booking inquiry
+      ══════════════════════════════════════════════════════ */}
+      <EventInquirySection />
 
       {/* ══════════════════════════════════════════════════════
           REVIEWS — single-row carousel

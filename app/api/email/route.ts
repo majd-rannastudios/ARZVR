@@ -1,7 +1,8 @@
 import { Resend } from "resend"
 import { NextRequest, NextResponse } from "next/server"
+import { EMAIL_FROM } from "@/lib/site"
 
-const FROM = "EVO 360 Byblos <noreply@vrz.lb>"
+const FROM = EMAIL_FROM
 
 export interface EmailBooking {
   id: string

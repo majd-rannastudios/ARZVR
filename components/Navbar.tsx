@@ -12,12 +12,13 @@ type NavLink = { href: string; label: string; anchor?: boolean }
 const links: NavLink[] = [
   { href: "/", label: "Home" },
   { href: "/#experience", label: "Experience", anchor: true },
+  { href: "/#events", label: "Events", anchor: true },
   { href: "/#book", label: "Book Now", anchor: true },
   { href: "/bookings", label: "My Bookings" },
   { href: "/#contact", label: "Contact", anchor: true },
 ]
 
-const ANCHOR_SECTIONS = ["experience", "book", "contact"]
+const ANCHOR_SECTIONS = ["book", "experience", "events", "contact"]
 
 export default function Navbar() {
   const pathname = usePathname()
