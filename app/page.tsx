@@ -186,7 +186,7 @@ export default function Home() {
           <iframe
             src="https://www.youtube.com/embed/w5xqWh8o2JY?autoplay=1&mute=1&loop=1&playlist=w5xqWh8o2JY&controls=0&rel=0&modestbranding=1&showinfo=0&playsinline=1&disablekb=1"
             allow="autoplay; encrypted-media; picture-in-picture"
-            title="VRZ Background"
+            title="EVO 360 Background"
             style={{
               position: "absolute",
               top: "50%",
@@ -334,7 +334,7 @@ export default function Home() {
             VR Hunting
           </h2>
           <p className="text-zinc-400 text-lg leading-relaxed">
-            VR hunting at VRZ isn&apos;t a game. It&apos;s a simulation built for people who want to feel what&apos;s at stake —
+            VR hunting at EVO 360 isn&apos;t a game. It&apos;s a simulation built for people who want to feel what&apos;s at stake —
             with no real risk and all of the adrenaline.
           </p>
         </div>
@@ -365,7 +365,7 @@ export default function Home() {
                   and 360° vision. You track, aim, and react as if you&apos;re really there.
                 </p>
                 <p>
-                  At VRZ, each of our six stations is equipped with high-refresh-rate headsets
+                  At EVO 360, each of our six stations is equipped with high-refresh-rate headsets
                   and motion-tracked controllers. The experience is physical, precise, and
                   deeply engaging.
                 </p>
@@ -389,7 +389,7 @@ export default function Home() {
                 src="https://www.youtube.com/embed/w5xqWh8o2JY?rel=0&modestbranding=1"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
-                title="VRZ Experience Preview"
+                title="EVO 360 Experience Preview"
                 className="absolute inset-0 w-full h-full"
               />
             </div>
@@ -496,7 +496,7 @@ export default function Home() {
           <div className="text-center mb-14">
             <span className="text-xs font-semibold uppercase tracking-widest text-vrz-green mb-4 block">Get In Touch</span>
             <h2 className="font-heading text-4xl sm:text-6xl text-white" style={{ fontFamily: "var(--font-heading)" }}>
-              Contact VRZ
+              Contact EVO 360
             </h2>
             <p className="text-zinc-500 mt-3 max-w-md mx-auto">
               Questions, group bookings, or just want to know more? We&apos;re easy to reach.

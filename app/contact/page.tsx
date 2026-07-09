@@ -4,7 +4,7 @@ import { MapPinIcon, ClockIcon, MessageCircleIcon, MailIcon, PhoneIcon } from "l
 export const metadata: Metadata = {
   title: "Contact",
   description:
-    "Get in touch with VRZ. Find us in Byblos (Jbeil), Lebanon. Open daily 3 PM – 11 PM. WhatsApp or email for bookings and inquiries.",
+    "Get in touch with EVO 360. Find us in Byblos (Jbeil), Lebanon. Open daily 3 PM – 11 PM. WhatsApp or email for bookings and inquiries.",
 }
 
 export default function ContactPage() {
@@ -19,7 +19,7 @@ export default function ContactPage() {
           className="font-heading text-5xl sm:text-7xl text-white"
           style={{ fontFamily: "var(--font-heading)" }}
         >
-          Contact VRZ
+          Contact EVO 360
         </h1>
         <p className="text-zinc-500 mt-4 max-w-md mx-auto">
           Questions, group bookings, or just want to know more? We&apos;re easy to reach.

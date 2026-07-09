@@ -6,7 +6,7 @@ import MachineCard from "@/components/MachineCard"
 export const metadata: Metadata = {
   title: "Experience",
   description:
-    "Discover what VR hunting at VRZ feels like. 6 independent machines, fully immersive environments, and sessions from 15 minutes to 2 hours.",
+    "Discover what VR hunting at EVO 360 feels like. 6 independent machines, fully immersive environments, and sessions from 15 minutes to 2 hours.",
 }
 
 const howItWorks = [
@@ -68,7 +68,7 @@ export default function ExperiencePage() {
             VR Hunting
           </h1>
           <p className="text-zinc-400 text-lg leading-relaxed max-w-xl mx-auto">
-            VR hunting at VRZ isn&apos;t a game. It&apos;s a simulation built
+            VR hunting at EVO 360 isn&apos;t a game. It&apos;s a simulation built
             for people who want to feel what&apos;s at stake — with no real
             risk and all of the adrenaline.
           </p>
@@ -94,7 +94,7 @@ export default function ExperiencePage() {
                   and react as if you&apos;re really there.
                 </p>
                 <p>
-                  At VRZ, each of our six stations is equipped with
+                  At EVO 360, each of our six stations is equipped with
                   high-refresh-rate headsets and motion-tracked controllers.
                   The experience is physical, precise, and deeply engaging.
                 </p>

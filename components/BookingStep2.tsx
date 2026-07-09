@@ -36,7 +36,7 @@ export default function BookingStep2({ selected, onChange }: BookingStep2Props) 
         >
           Session Type
         </h2>
-        <p className="text-sm text-zinc-500">How do you want to experience VRZ?</p>
+        <p className="text-sm text-zinc-500">How do you want to experience EVO 360?</p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-lg">

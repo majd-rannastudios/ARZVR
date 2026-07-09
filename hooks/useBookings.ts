@@ -26,7 +26,7 @@ export function generateBookingId(date: Date): string {
   const dateStr = format(date, "yyyyMMdd")
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
   const random = Array.from({ length: 4 }, () => chars[Math.floor(Math.random() * chars.length)]).join("")
-  return `VRZ-${dateStr}-${random}`
+  return `EVO360-${dateStr}-${random}`
 }
 
 function fromRow(row: Record<string, unknown>): Booking {

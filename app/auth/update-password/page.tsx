@@ -33,7 +33,7 @@ export default function UpdatePasswordPage() {
     <div className="min-h-screen bg-black flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-10">
-          <span className="font-heading text-5xl tracking-widest text-white" style={{ fontFamily: "var(--font-heading)" }}>VRZ</span>
+          <span className="font-heading text-5xl tracking-widest text-white" style={{ fontFamily: "var(--font-heading)" }}>EVO 360</span>
           <div className="flex items-center justify-center gap-2 mt-2">
             <ZapIcon className="size-3 text-vrz-green" />
             <span className="text-xs uppercase tracking-widest text-zinc-500">Set Password</span>

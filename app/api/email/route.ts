@@ -1,7 +1,7 @@
 import { Resend } from "resend"
 import { NextRequest, NextResponse } from "next/server"
 
-const FROM = "VRZ Byblos <noreply@vrz.lb>"
+const FROM = "EVO 360 Byblos <noreply@vrz.lb>"
 
 export interface EmailBooking {
   id: string
@@ -45,7 +45,7 @@ function buildHtml(type: EmailType, b: EmailBooking): { subject: string; html: s
       message: "Your booking has been cancelled. If this was a mistake, reach out to us on WhatsApp.",
     },
     completed: {
-      subject: `Thanks for hunting with VRZ — ${b.id}`,
+      subject: `Thanks for hunting with EVO 360 — ${b.id}`,
       headline: "Good session. 🔫",
       color: "#00FF7F",
       message: "Hope the hunt was intense. Come back anytime — your stats are waiting.",
@@ -70,7 +70,7 @@ function buildHtml(type: EmailType, b: EmailBooking): { subject: string; html: s
 
         <!-- Logo -->
         <tr><td style="padding-bottom:32px;text-align:center;">
-          <span style="font-size:36px;font-weight:900;letter-spacing:8px;color:#fff;">VRZ</span>
+          <span style="font-size:36px;font-weight:900;letter-spacing:8px;color:#fff;">EVO 360</span>
           <div style="width:32px;height:2px;background:${color};margin:8px auto 0;border-radius:2px;box-shadow:0 0 8px ${color};"></div>
         </td></tr>
 
@@ -99,7 +99,7 @@ function buildHtml(type: EmailType, b: EmailBooking): { subject: string; html: s
           <!-- Location -->
           <div style="background:#111;border-radius:8px;padding:14px;margin-bottom:24px;">
             <p style="margin:0 0 4px;font-size:12px;color:#555;text-transform:uppercase;letter-spacing:1px;">Location</p>
-            <p style="margin:0;font-size:14px;color:#ccc;">VRZ — VR Hunting Lounge, Byblos, Lebanon</p>
+            <p style="margin:0;font-size:14px;color:#ccc;">EVO 360 — VR Hunting Lounge, Byblos, Lebanon</p>
             <p style="margin:4px 0 0;font-size:13px;color:#555;">Open daily 3 PM – 11 PM</p>
             <p style="margin:8px 0 0;font-size:13px;"><a href="https://maps.app.goo.gl/Y6qvtgqZvcge1ik4A?g_st=ac" style="color:${color};text-decoration:none;">Get directions →</a></p>
           </div>
@@ -113,7 +113,7 @@ function buildHtml(type: EmailType, b: EmailBooking): { subject: string; html: s
 
         <!-- Footer -->
         <tr><td style="padding-top:24px;text-align:center;">
-          <p style="margin:0;font-size:11px;color:#333;">VRZ · Byblos, Lebanon · vrz.lb</p>
+          <p style="margin:0;font-size:11px;color:#333;">EVO 360 · Byblos, Lebanon · vrz.lb</p>
         </td></tr>
 
       </table>

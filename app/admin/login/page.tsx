@@ -69,7 +69,7 @@ export default function AdminLoginPage() {
         {/* Logo */}
         <div className="text-center mb-10">
           <span className="font-heading text-5xl tracking-widest text-white" style={{ fontFamily: "var(--font-heading)" }}>
-            VRZ
+            EVO 360
           </span>
           <div className="flex items-center justify-center gap-2 mt-2">
             <ZapIcon className="size-3 text-vrz-green" />

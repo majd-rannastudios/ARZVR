@@ -24,7 +24,7 @@ const dmSans = DM_Sans({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE_NAME} — VR Hunting Lounge | Byblos, Lebanon`,
+    default: `${SITE_NAME} — VR Lounge | Byblos, Lebanon`,
     template: `%s | ${SITE_NAME}`,
   },
   description:

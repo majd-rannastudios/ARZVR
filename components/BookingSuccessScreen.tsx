@@ -13,9 +13,9 @@ export default function BookingSuccessScreen({ booking }: BookingSuccessScreenPr
   const dateObj = parseISO(booking.date)
 
   async function handleShare() {
-    const text = `I just booked a VR session at VRZ Byblos! 🎮\nSession: ${booking.id}\nDate: ${format(dateObj, "MMMM d, yyyy")}\nTime: ${booking.startTime} – ${booking.endTime}`
+    const text = `I just booked a VR session at EVO 360 Byblos! 🎮\nSession: ${booking.id}\nDate: ${format(dateObj, "MMMM d, yyyy")}\nTime: ${booking.startTime} – ${booking.endTime}`
     if (navigator.share) {
-      await navigator.share({ text, title: "VRZ Booking" })
+      await navigator.share({ text, title: "EVO 360 Booking" })
     } else {
       await navigator.clipboard.writeText(text)
       alert("Booking details copied to clipboard!")

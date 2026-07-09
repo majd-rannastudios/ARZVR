@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og"
 import { readFile } from "node:fs/promises"
 import { join } from "node:path"
 
-export const alt = "EVO360VR — VR Hunting Lounge in Byblos, Lebanon"
+export const alt = "EVO 360 — VR Hunting Lounge in Byblos, Lebanon"
 export const size = { width: 1200, height: 630 }
 export const contentType = "image/png"
 
