@@ -164,11 +164,13 @@ export default function ExpensesPage() {
   // Create form
   const [createForm,  setCreateForm]  = useState<ExpenseFields>(BLANK_FORM)
   const [creating,    setCreating]    = useState(false)
+  const [createError, setCreateError] = useState<string | null>(null)
 
   // Edit panel
   const [editTarget,  setEditTarget]  = useState<Expense | null>(null)
   const [editForm,    setEditForm]    = useState<ExpenseFields>(BLANK_FORM)
   const [editSaving,  setEditSaving]  = useState(false)
+  const [editError,   setEditError]   = useState<string | null>(null)
 
   useEffect(() => {
     createClient().from("expenses").select("*")
@@ -190,6 +192,7 @@ export default function ExpensesPage() {
 
   function openEdit(exp: Expense) {
     setEditTarget(exp)
+    setEditError(null)
     setEditForm({
       phase:       exp.phase as "capex" | "opex",
       category:    exp.category,
@@ -227,6 +230,7 @@ export default function ExpensesPage() {
     const f = createForm
     if (!f.category || !f.amount) return
     setCreating(true)
+    setCreateError(null)
     const supabase = createClient()
 
     const splitData: SplitEntry[] = f.isSplit
@@ -247,6 +251,9 @@ export default function ExpensesPage() {
       setExpenses(prev => [{ ...data, splits: data.splits ?? [] }, ...prev])
       if (!f.isSplit) await maybeInject(supabase, f.paidBy, f.amount, f.date, f.category, f.description)
       setCreateForm(BLANK_FORM)
+    } else {
+      console.error("Failed to create expense:", error)
+      setCreateError(error?.message || "Failed to save. The insert may be blocked by a database permission rule.")
     }
     setCreating(false)
   }
@@ -258,6 +265,7 @@ export default function ExpensesPage() {
     const f = editForm
     if (!f.category || !f.amount) return
     setEditSaving(true)
+    setEditError(null)
     const supabase = createClient()
 
     const splitData: SplitEntry[] = f.isSplit
@@ -283,13 +291,21 @@ export default function ExpensesPage() {
         await maybeInject(supabase, f.paidBy, f.amount, f.date, f.category, f.description)
       }
       closeEdit()
+    } else {
+      console.error("Failed to save expense:", error)
+      setEditError(error?.message || "Failed to save changes. The update may be blocked by a database permission rule.")
     }
     setEditSaving(false)
   }
 
   // ── delete ─────────────────────────────────────────────────────────────────
   async function deleteExpense(id: string) {
-    await createClient().from("expenses").delete().eq("id", id)
+    const { error } = await createClient().from("expenses").delete().eq("id", id)
+    if (error) {
+      console.error("Failed to delete expense:", error)
+      alert(error.message || "Failed to delete. The delete may be blocked by a database permission rule.")
+      return
+    }
     setExpenses(prev => prev.filter(e => e.id !== id))
     if (editTarget?.id === id) closeEdit()
   }
@@ -298,7 +314,12 @@ export default function ExpensesPage() {
     const updated = expense.splits.map((s, i) =>
       i === splitIdx ? { ...s, reimbursed: !s.reimbursed } : s
     )
-    await createClient().from("expenses").update({ splits: updated }).eq("id", expense.id)
+    const { error } = await createClient().from("expenses").update({ splits: updated }).eq("id", expense.id)
+    if (error) {
+      console.error("Failed to update reimbursement status:", error)
+      alert(error.message || "Failed to update. The update may be blocked by a database permission rule.")
+      return
+    }
     setExpenses(prev => prev.map(e => e.id === expense.id ? { ...e, splits: updated } : e))
   }
 
@@ -415,6 +436,11 @@ export default function ExpensesPage() {
         </div>
         <form onSubmit={submitCreate} className="space-y-4">
           <FormFields f={createForm} set={setC} splitTotal={cSplitTotal} remaining={cRemaining} />
+          {createError && (
+            <p className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">
+              {createError}
+            </p>
+          )}
           <button type="submit" disabled={creating}
             className="h-10 px-6 rounded-lg bg-vrz-green text-black text-sm font-bold hover:bg-vrz-green/90 transition-all disabled:opacity-50">
             {creating ? "Saving…" : "Add Expense"}
@@ -551,6 +577,11 @@ export default function ExpensesPage() {
 
             <form onSubmit={submitEdit} className="space-y-4">
               <FormFields f={editForm} set={setE} splitTotal={eSplitTotal} remaining={eRemaining} />
+              {editError && (
+                <p className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">
+                  {editError}
+                </p>
+              )}
               <div className="flex gap-3 pt-2">
                 <button type="submit" disabled={editSaving}
                   className="flex-1 h-10 rounded-lg bg-vrz-green text-black text-sm font-bold hover:bg-vrz-green/90 transition-all disabled:opacity-50">
